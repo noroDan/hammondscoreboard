@@ -588,7 +588,7 @@ const CFG_BASE={
   riesgo:'En riesgo · se enfrió', caido:'Perdido · fuera del proceso',
   personas:[{k:'p1',n:'PERSONA 1',r:'líder'},{k:'p2',n:'PERSONA 2',r:''},{k:'p3',n:'PERSONA 3',r:''}],
   filaLbl:'CUENTA', lineaLbl:'LÍNEA',
-  modLeads:true, modConvo:false, modLineas:true
+  modLeads:false, modConvo:false, modLineas:true
 };
 
 let W=21, META=3, OTI_INI=0, OTI_FIN=1, PASO=1, START=new Date(), NET=6, PERSONAS=[], SALTOS=[];
@@ -697,6 +697,13 @@ function defaults(){
   if(!D.commits)D.commits={};
   if(!D.leads)D.leads=[];
   if(!D.cfg)D.cfg=JSON.parse(JSON.stringify(CFG_BASE));
+  if(D.cfgv!==2){
+    D.cfg=Object.assign({},D.cfg,{
+      semanas:67, inicio:'2026-09-17',
+      otiIni:0, otiFin:5000000, uSim:'$', uSuf:'', uMM:true,
+      modLeads:false});
+    D.semanas=67; D.cfgv=2;
+  }
   aplicaCfg();
   D.clients.forEach(c=>{if(c.st[0]==null||c.st[0]==='')c.st[0]=0;});
   if(!D.modo)D.modo='nuevo';
