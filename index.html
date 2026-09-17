@@ -127,6 +127,11 @@
     padding:13px 18px;border-bottom:1px solid var(--linea);flex-wrap:wrap}
   .ctag{font-family:Poppins,sans-serif;font-weight:800;font-size:9.5px;letter-spacing:.22em;color:var(--gris)}
   .stgroup{display:flex;gap:22px;flex-wrap:wrap}
+  .ysel{display:inline-flex;gap:4px;margin-left:12px;vertical-align:middle}
+  .ysel button{font-family:Poppins,sans-serif;font-weight:800;font-size:9px;letter-spacing:.12em;
+    border:1px solid var(--linea);background:#fff;color:var(--gris);padding:5px 10px;
+    border-radius:3px;cursor:pointer}
+  .ysel button.on{background:var(--negro);border-color:var(--negro);color:#fff}
   .status{display:flex;align-items:center;gap:8px}
   .slbl{font-family:Poppins,sans-serif;font-weight:700;font-size:8px;letter-spacing:.18em;color:#B4B4B4}
   .lamp{width:14px;height:14px;border-radius:50%;background:#DCE4EC;transition:background .3s}
@@ -404,7 +409,7 @@
   <div id="tab-marcador">
   <div class="card">
     <div class="chead">
-      <div class="ctag">OTI · EL RESULTADO</div>
+      <div class="ctag">OTI · EL RESULTADO <span class="ysel" id="ysel-oti"></span></div>
       <div class="stgroup"><div class="status">
         <span class="lamp" id="l-oti-v"></span><span class="lamp" id="l-oti-a"></span><span class="lamp" id="l-oti-r"></span>
         <span class="stxt" id="oti-txt">SIN DATO</span></div></div>
@@ -446,7 +451,7 @@
   <!-- PALANCA -->
   <div class="card">
     <div class="chead">
-      <div class="ctag">PALANCA · LO QUE CONTROLAMOS</div>
+      <div class="ctag">PALANCA · LO QUE CONTROLAMOS <span class="ysel" id="ysel-pal"></span></div>
       <div class="stgroup">
         <div class="status"><span class="slbl">GLOBAL</span>
           <span class="lamp" id="l-pal-v"></span><span class="lamp" id="l-pal-a"></span><span class="lamp" id="l-pal-r"></span>
@@ -574,8 +579,8 @@ const CFG_BASE={
   marca:'HAMMOND POWER SOLUTIONS', tablero:'MARCADOR OTI', logo:true,
   otiTexto:'Presiona el engrane de arriba para escribir aquí el OTI del equipo. Formato: verbo + <strong>de X a Y</strong> + para cuándo.',
   otiNota:'Describe qué se está midiendo.',
-  otiIni:0, otiFin:100, inicio:new Date().toISOString().slice(0,10), semanas:12,
-  uSim:'', uSuf:'', uMM:false,
+  otiIni:0, otiFin:5000000, inicio:'2026-09-17', semanas:67,
+  uSim:'$', uSuf:'', uMM:true,
   palTexto:'Escribe aquí la palanca: la acción semanal que el equipo controla y que mueve el OTI.',
   palNota:'Describe exactamente qué cuenta y qué no, para que nadie tenga que preguntarlo.',
   palMeta:3, palUnidad:'avances',
@@ -603,15 +608,25 @@ function aplicaCfg(){
   for(let i=1;i<NET;i++)SALTOS.push(c.etapas[i-1]+' → '+c.etapas[i]);
 }
 function esc(t){return String(t==null?'':t).replace(/[<>]/g,m=>m==='<'?'&lt;':'&gt;');}
+function anioDe(n){const d=new Date(START);d.setDate(d.getDate()+(n-1)*7);return d.getFullYear();}
+function anios(){const a=[];for(let i=1;i<=W;i++){const y=anioDe(i);if(!a.includes(y))a.push(y);}return a;}
+function tramo(){
+  const ys=anios();
+  if(ys.length<2)return {a:1,b:W,y:ys[0]||new Date().getFullYear(),multi:false};
+  const y=ys.includes(ANIO)?ANIO:anioDe(D.week);
+  let a=null,b=null;
+  for(let i=1;i<=W;i++){if(anioDe(i)===y){if(a==null)a=i;b=i;}}
+  return {a:a||1,b:b||W,y:y,multi:true};
+}
 function bandasMeses(){
-  const g=[];
-  for(let i=1;i<=W;i++){const d=new Date(START);d.setDate(d.getDate()+(i-1)*7);
+  const g=[],T=tramo();
+  for(let i=T.a;i<=T.b;i++){const d=new Date(START);d.setDate(d.getDate()+(i-1)*7);
     const m=d.getMonth(),y=d.getFullYear(),u=g[g.length-1];
     if(u&&u.m===m&&u.y===y)u.b=i;else g.push({m,y,a:i,b:i});}
   return g.map(o=>({t:MESES[o.m].toUpperCase(),a:o.a,b:o.b}));}
 
 let D={clients:[],cobrado:{},commits:{},convo:[],week:1,resp:'',modo:'nuevo',lineas:null,cob:null,leads:null,cfg:null};
-let VISTA='semana', EDITAR=false;
+let VISTA='semana', EDITAR=false, ANIO=0;
 
 function wkDate(n){const d=new Date(START);d.setDate(d.getDate()+(n-1)*7);return d.getDate()+' '+MESES[d.getMonth()];}
 function metaOti(n){return Math.min(OTI_FIN,OTI_INI+(n-1)*PASO);}
@@ -626,9 +641,12 @@ function valOti(w){
   const v=(D.cob[0]||{})[w];return (v==null||v==='')?null:Number(v);}
 function money(v){const c=cfg();
   return (c.uSim||'')+Math.round(v).toLocaleString('en-US')+(c.uSuf||'');}
-function mm(v){const c=cfg();
-  if(!c.uMM)return (c.uSim||'')+Math.round(v).toLocaleString('en-US')+(c.uSuf||'');
-  return (c.uSim||'')+(v/1000000).toFixed(2).replace(/0$/,'')+'M'+(c.uSuf||'');}
+function mm(v){const c=cfg(),s=c.uSim||'',f=c.uSuf||'',a=Math.abs(v);
+  if(c.uMM||a>=1000000){
+    if(a>=1000000)return s+(v/1000000).toFixed(a>=10000000?1:2).replace(/\.?0+$/,'')+'M'+f;
+    if(a>=1000)return s+(v/1000).toFixed(0)+'K'+f;}
+  if(a>=10000)return s+(v/1000).toFixed(0)+'K'+f;
+  return s+Math.round(v).toLocaleString('en-US')+f;}
 
 /* ================== CONFIGURACIÓN COMPARTIDA ==================
    Pega aquí los dos datos de tu proyecto Supabase.
@@ -761,33 +779,40 @@ function pintar(pre,est){
 
 /* ---------- gráfica OTI ---------- */
 function chartOti(){
-  const x=n=>72+(n-1)*(538/(W-1));
-  const y=v=>Math.max(32,Math.min(250,250-((v-OTI_INI)/(OTI_FIN-OTI_INI))*212));
-  const marcas=[1100000,1500000,2000000,2500000,2900000];
+  const marcas=[],rango=OTI_FIN-OTI_INI;
+  for(let i=0;i<=4;i++)marcas.push(OTI_INI+rango*i/4);
+  const etiq=marcas.map(v=>mm(v));
+  const largo=etiq.reduce((a,b)=>Math.max(a,b.length),0);
+  const MX=Math.min(150,Math.max(58,26+largo*6.4));
+  const T=tramo(), NS=Math.max(1,T.b-T.a);
+  const x=n=>MX+(n-T.a)*((618-MX)/NS);
+  const y=v=>Math.max(32,Math.min(250,250-((v-OTI_INI)/(rango||1))*212));
   let grid='',ylab='';
-  marcas.forEach(v=>{grid+=`<line x1="72" y1="${y(v)}" x2="618" y2="${y(v)}" stroke="#E6ECF2" stroke-width="1"/>`;
-    ylab+=`<text x="66" y="${y(v)+4}">${mm(v)}</text>`;});
+  marcas.forEach((v,i)=>{grid+=`<line x1="${MX}" y1="${y(v)}" x2="618" y2="${y(v)}" stroke="#E6ECF2" stroke-width="1"/>`;
+    ylab+=`<text x="${MX-6}" y="${y(v)+4}">${etiq[i]}</text>`;});
 
   // separadores de mes + bandas
   let seps='',bandas='';
   bandasMeses().forEach(({t:m,a,b},i)=>{
-    if(i>0){const xs=x(a)-((538/(W-1))/2);
+    if(i>0){const xs=x(a)-(((618-MX)/NS)/2);
       seps+=`<line x1="${xs}" y1="32" x2="${xs}" y2="262" stroke="#DCDCDC" stroke-width="1"/>`;}
     bandas+=`<text x="${(x(a)+x(b))/2}" y="284">${m}</text>`;});
 
   // marcas y numero de TODAS las semanas
   let ticks='',labs='';
-  for(let i=1;i<=W;i++){
+  const salto=NS>26?Math.ceil((NS+1)/26):1;
+  for(let i=T.a;i<=T.b;i++){
     ticks+=`<line x1="${x(i)}" y1="250" x2="${x(i)}" y2="256"/>`;
-    labs+=`<text x="${x(i)}" y="268"${i===D.week?' fill="#49C2F1" font-weight="800"':''}>${i}</text>`;}
+    if((i-T.a)%salto===0||i===D.week)
+      labs+=`<text x="${x(i)}" y="268"${i===D.week?' fill="#49C2F1" font-weight="800"':''}>${i}</text>`;}
 
   let metaPts=[];
-  for(let i=1;i<=W;i++)metaPts.push(x(i)+','+y(metaOti(i)));
+  for(let i=T.a;i<=T.b;i++)metaPts.push(x(i)+','+y(metaOti(i)));
   metaPts=metaPts.join(' ');
 
   // puntos
   let pts=[],ult=null;
-  for(let i=1;i<=W;i++){const v=valOti(i);
+  for(let i=T.a;i<=T.b;i++){const v=valOti(i);
     if(v!=null){pts.push([x(i),y(v),i,v]);ult=[x(i),y(v),i,v];}}
   const real=pts.length>1?`<polyline fill="none" stroke="#49C2F1" stroke-width="3.5" stroke-linejoin="round" points="${pts.map(p=>p[0]+','+p[1]).join(' ')}"/>`:'';
   const dots=pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#49C2F1"/>`).join('');
@@ -796,17 +821,17 @@ function chartOti(){
   let guia='';
   if(ult){
     guia=`<line x1="${ult[0]}" y1="${ult[1]}" x2="${ult[0]}" y2="250" stroke="#49C2F1" stroke-width="1.2" stroke-dasharray="3,3"/>
-    <line x1="72" y1="${ult[1]}" x2="${ult[0]}" y2="${ult[1]}" stroke="#49C2F1" stroke-width="1.2" stroke-dasharray="3,3"/>
+    <line x1="${MX}" y1="${ult[1]}" x2="${ult[0]}" y2="${ult[1]}" stroke="#49C2F1" stroke-width="1.2" stroke-dasharray="3,3"/>
     <circle cx="${ult[0]}" cy="${ult[1]}" r="6" fill="#fff" stroke="#49C2F1" stroke-width="3"/>
-    <rect x="${Math.min(ult[0]-30,556)}" y="${Math.max(ult[1]-30,6)}" width="60" height="19" rx="2" fill="#49C2F1"/>
-    <text x="${Math.min(ult[0],586)}" y="${Math.max(ult[1]-16,20)}" font-family="Poppins" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">S${ult[2]} · ${wkDate(ult[2])}</text>`;}
+    <rect x="${Math.max(MX,Math.min(ult[0]-33,552))}" y="${Math.max(ult[1]-30,6)}" width="66" height="19" rx="2" fill="#49C2F1"/>
+    <text x="${Math.max(MX+33,Math.min(ult[0],585))}" y="${Math.max(ult[1]-16,20)}" font-family="Poppins" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">S${ult[2]} · ${wkDate(ult[2])}</text>`;}
 
   document.getElementById('otichart').innerHTML=`
   <svg viewBox="0 0 640 292" role="img" aria-label="Cobrado acumulado contra linea de meta, semana a semana">
     <rect x="${x(D.week)-13}" y="32" width="26" height="218" fill="var(--activa)"/>
     ${grid}${seps}
-    <line x1="72" y1="250" x2="618" y2="250" stroke="#082040" stroke-width="2"/>
-    <line x1="72" y1="32" x2="72" y2="250" stroke="#082040" stroke-width="2"/>
+    <line x1="${MX}" y1="250" x2="618" y2="250" stroke="#082040" stroke-width="2"/>
+    <line x1="${MX}" y1="32" x2="${MX}" y2="250" stroke="#082040" stroke-width="2"/>
     <polyline fill="none" stroke="#082040" stroke-width="2.5" stroke-dasharray="8,5" points="${metaPts}"/>
     ${real}${dots}${guia}
     <g stroke="#C3CEDA" stroke-width="1">${ticks}</g>
@@ -818,14 +843,19 @@ function chartOti(){
 
 /* ---------- gráfica PALANCA ---------- */
 function chartPal(){
-  const span=Math.min(24.5,(574-48)/W), bx=n=>48+(n-1)*span,
-        base=205, u=25, ancho=Math.max(4,span-7.5);
+  const T=tramo(), NB=T.b-T.a+1;
+  const span=Math.min(24.5,(574-48)/NB), bx=n=>48+(n-T.a)*span, base=205, ancho=Math.max(4,span-7.5);
+  let tope=META*2;
+  for(let i=T.a;i<=T.b;i++){const d=delta(i);if(d!=null&&d>tope)tope=d;}
+  tope=Math.max(tope,META+1);
+  const u=170/tope;
   let bars='',labs='',bandas='';
-  for(let i=1;i<=W;i++){
+  const saltoB=NB>26?Math.ceil(NB/26):1;
+  for(let i=T.a;i<=T.b;i++){
     const d=delta(i);
     bars+=`<rect x="${bx(i)}" y="${base-META*u}" width="${ancho}" height="${META*u}" fill="#EDF1F5"/>`;
     if(d!=null){const col=d>=META?'#16A47A':d>=META-1?'#E8A33D':'#D64A3C';
-      const h=Math.max(2,Math.min(d,6)*u);
+      const h=Math.max(2,Math.min(d,tope)*u);
       bars+=`<rect x="${bx(i)}" y="${base-h}" width="${ancho}" height="${h}" fill="${col}"/>`;}
     labs+=`<text x="${bx(i)+ancho/2}" y="221"${i===D.week?' fill="#49C2F1" font-weight="700"':''}>${i}</text>`;
   }
@@ -835,17 +865,18 @@ function chartPal(){
     bandas+=`<text x="${(bx(a)+bx(b)+ancho)/2}" y="238">${m}</text>`;});
   const p=promedio(); let pbar='';
   if(p){const col=p.v>=META?'#16A47A':p.v>=META-1?'#E8A33D':'#D64A3C';
-    const h=Math.max(2,Math.min(p.v,6)*u);
+    const h=Math.max(2,Math.min(p.v,tope)*u);
     pbar=`<rect x="588" y="${base-h}" width="22" height="${h}" fill="${col}"/>
           <text x="599" y="${base-h-7}" font-family="Poppins" font-size="11" font-weight="800" fill="${col}" text-anchor="middle">${p.v.toFixed(1)}</text>`;}
   document.getElementById('palchart').innerHTML=`
   <svg viewBox="0 0 640 246" role="img" aria-label="Etapas avanzadas por semana contra meta de tres">
-    <line x1="42" y1="205" x2="620" y2="205" stroke="#082040" stroke-width="2"/>
-    <line x1="42" y1="30" x2="42" y2="205" stroke="#082040" stroke-width="2"/>
+    <line x1="42" y1="205" x2="${Math.max(200,bx(T.b)+ancho+10)}" y2="205" stroke="#082040" stroke-width="2"/>
+    <line x1="42" y1="${Math.min(30,base-tope*u-6)}" x2="42" y2="205" stroke="#082040" stroke-width="2"/>
     <g font-family="Poppins" font-size="9.5" font-weight="700" fill="#6B7A8C" text-anchor="end">
-      <text x="36" y="209">0</text><text x="36" y="159">2</text><text x="36" y="109">4</text><text x="36" y="59">6</text></g>
+      ${[0,1,2,3].map(i=>{const v=tope*i/3;
+        return `<text x="36" y="${base-v*u+4}">${Math.round(v)}</text>`;}).join('')}</g>
     ${seps}${bars}
-    <line x1="42" y1="${205-META*u}" x2="574" y2="${205-META*u}" stroke="#082040" stroke-width="2.5"/>
+    <line x1="42" y1="${205-META*u}" x2="${Math.max(160,Math.min(574,bx(T.b)+ancho+6))}" y2="${205-META*u}" stroke="#082040" stroke-width="2.5"/>
     <text x="570" y="${205-META*u-10}" font-family="Poppins" font-size="11" font-weight="700" text-anchor="end">META ${META}</text>
     <line x1="580" y1="30" x2="580" y2="212" stroke="#082040" stroke-width="1.5"/>
     ${pbar}
@@ -857,8 +888,9 @@ function chartPal(){
 
 /* ---------- matriz ---------- */
 function matriz(){
+  const T=tramo();
   let h=`<thead><tr><th class="nm">${esc(cfg().filaLbl||'CLIENTE')}</th><th class="ini">INICIO</th>`;
-  for(let i=1;i<=W;i++)h+=`<th class="${i===D.week?'cur':''}">S${i}</th>`;
+  for(let i=T.a;i<=T.b;i++)h+=`<th class="${i===D.week?'cur':''}">S${i}</th>`;
   h+='</tr></thead><tbody>';
 
   const idx=D.clients.map((c,i)=>i);
@@ -875,7 +907,7 @@ function matriz(){
       <input class="nmi" data-ci="${ci}" data-f="name" value="${(c.name||'').replace(/"/g,'&quot;')}"></div>
       ${(rg||cd)?`<input class="nota-i" data-ci="${ci}" data-f="nota" placeholder="¿Qué pasó?" value="${(c.nota||'').replace(/"/g,'&quot;')}">`:''}</td>
       <td class="ini"><input class="cell" type="number" min="0" max="${NET+2}" data-ci="${ci}" data-w="0" value="${c.st[0]??0}"></td>`;
-    for(let i=1;i<=W;i++){
+    for(let i=T.a;i<=T.b;i++){
       const v=c.st[i]??'', p=etapaPrev(c,i);
       let cls=i===D.week?'cur ':'';
       if(v!==''){const n=Number(v);
@@ -885,7 +917,7 @@ function matriz(){
     return r+'</tr>';};
 
   const sep=(txt,n,tono,pie)=>`<tr class="sep ${tono}"><td class="nm">${txt}</td><td class="ini">${n}</td>
-    <td colspan="${W}" style="text-align:left;padding:7px 10px">${pie}</td></tr>`;
+    <td colspan="${T.b-T.a+1}" style="text-align:left;padding:7px 10px">${pie}</td></tr>`;
 
   act.forEach(ci=>{h+=fila(ci);});
   if(rie.length){h+=sep('EN RIESGO',rie.length,'ama','SE ENFRIARON · siguen vivos, no cuentan para el Δ');
@@ -899,7 +931,7 @@ function matriz(){
   const pc=!pr?'':pr.v>=META?'v':pr.v>=META-1?'a':'r';
   h+=`<tr class="delta"><td class="nm">Δ SEMANAL</td>
     <td class="ini prom ${pc}"><b>${pr?pr.v.toFixed(1):'—'}</b><i>PROM</i></td>`;
-  for(let i=1;i<=W;i++){const d=delta(i);
+  for(let i=T.a;i<=T.b;i++){const d=delta(i);
     const cl=d==null?'':d>=META?'v':d>=META-1?'a':'r';
     h+=`<td class="${cl}">${d==null?'—':d}</td>`;}
   h+='</tr></tbody>';
@@ -1106,6 +1138,11 @@ function pintaCfg(){
      <input type="text" data-cfp="${i}" data-f="r" value="${esc(p.r).replace(/"/g,'&quot;')}" placeholder="Rol (opcional)">
      ${c.personas.length>1?`<button class="btn x" data-cfpx="${i}" style="margin:0;border:none;color:#C3CEDA">×</button>`:'<span></span>'}</div>`).join('');
 }
+function pintaAnios(){
+  const ys=anios(), T=tramo();
+  const h=ys.length<2?'':ys.map(y=>`<button data-anio="${y}" class="${y===T.y?'on':''}">${y}</button>`).join('');
+  ['ysel-oti','ysel-pal'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=h;});
+}
 function pintaEscala(){
   const c=cfg();
   let h=(c.etapas||[]).map((e,i)=>
@@ -1187,7 +1224,7 @@ function render(){
   document.getElementById('pal-prom').textContent=p?p.v.toFixed(1):'—';
   pintar('pal',estado(p?p.v:null,META,'VAMOS GANANDO','VAMOS PERDIENDO'));
   pintar('sem',estado(d,META,'GANAMOS ESTA SEMANA','PERDIMOS ESTA SEMANA'));
-  pintaTextos();pintaEscala();pintaLineas();pintaAvance();chartOti();chartPal();matriz();comp();convo();leads();
+  pintaTextos();pintaAnios();pintaEscala();pintaLineas();pintaAvance();chartOti();chartPal();matriz();comp();convo();leads();
 }
 
 /* ---------- eventos ---------- */
@@ -1236,7 +1273,7 @@ document.addEventListener('change',e=>{
     }catch(err){alert('Ese archivo no es un respaldo válido de este marcador.');}};
     rd.readAsText(f);e.target.value='';return;}
   const t=e.target;
-  if(t.id==='wk'){D.week=Number(t.value);save();render();return;}
+  if(t.id==='wk'){D.week=Number(t.value);ANIO=anioDe(D.week);save();render();return;}
   if(t.id==='modo'){D.modo=t.value;save();render();return;}
   if(t.dataset.cm&&t.dataset.f==='cuando'){const a=getArr(t.dataset.cm),ix=Number(t.dataset.ix);
     a[ix]=a[ix]||{};a[ix].cuando=t.value;save();return;}
@@ -1312,6 +1349,7 @@ document.addEventListener('click',e=>{
     baja('\ufeff'+f.join('\n'),'text/csv;charset=utf-8','csv');return;}
   if(t.id==='cfgimpb'){const b=document.getElementById('cfgrest');
     b.style.display=b.style.display==='none'?'block':'none';return;}
+  if(t.dataset.anio){ANIO=Number(t.dataset.anio);render();return;}
   if(t.dataset.tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b===t));
     document.getElementById('tab-marcador').style.display=t.dataset.tab==='marcador'?'':'none';
     document.getElementById('tab-leads').style.display=t.dataset.tab==='leads'?'':'none';return;}
