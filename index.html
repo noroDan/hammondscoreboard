@@ -136,6 +136,15 @@
     padding:13px 18px;border-bottom:1px solid var(--linea);flex-wrap:wrap}
   .ctag{font-family:Poppins,sans-serif;font-weight:800;font-size:9.5px;letter-spacing:.22em;color:var(--gris)}
   .stgroup{display:flex;gap:22px;flex-wrap:wrap}
+  .palrow{display:flex;gap:0;align-items:stretch}
+  .palscroll{flex:1 1 auto;min-width:0;overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;cursor:grab}
+  .palscroll:active{cursor:grabbing}
+  .palscroll svg{display:block;height:auto}
+  .palprom{flex:0 0 78px;border-left:1px solid var(--linea);padding-left:2px}
+  .palprom svg{width:100%;height:auto;display:block}
+  .arrastra{font-family:Poppins,sans-serif;font-weight:700;font-size:8.5px;
+    letter-spacing:.18em;color:var(--cyan);text-align:center;margin-top:8px}
   .subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
   .subtabs button{font-family:Poppins,sans-serif;font-weight:700;font-size:9.5px;
     letter-spacing:.1em;border:1px solid var(--linea);background:#fff;color:var(--gris);
@@ -159,12 +168,6 @@
   .stxt{font-family:Poppins,sans-serif;font-weight:800;font-size:10px;letter-spacing:.12em}
 
   .split{display:grid;grid-template-columns:33% 67%}
-  .card.wide .split{grid-template-columns:minmax(0,1fr)}
-  .card.wide .pane.right{border-left:none;border-top:1px solid var(--linea);padding-top:18px}
-  .card.wide .pane:first-child{padding-bottom:16px}
-  .card.wide .escala{display:grid;grid-template-columns:repeat(4,1fr);gap:2px 18px;
-    border-top:1px solid var(--linea)}
-  .card.wide .escala .esep{margin-top:0;padding-top:0;border-top:none}
   .pane{padding:22px 20px;min-width:0}
   .pane.right{border-left:1px solid var(--linea)}
   .kicker{font-family:Poppins,sans-serif;font-weight:800;font-size:23px;margin-bottom:9px}
@@ -206,7 +209,30 @@
   .leg .m i{border-top:2px dashed #000}
   .leg .r i{border-top:3px solid var(--cyan)}
 
-  .escala{margin-top:16px;border-top:1px solid var(--linea);padding-top:12px}
+  .escala{margin-top:16px;border-top:1px solid var(--linea);padding-top:14px}
+  .lvt{font-family:Poppins,sans-serif;font-weight:800;font-size:8.5px;letter-spacing:.18em;
+    color:var(--gris);margin-bottom:10px}
+  .lvi{display:flex;align-items:center;gap:9px;padding:5px 0;cursor:pointer;border-radius:3px}
+  .lvi:hover{background:#F2F7FB}
+  .lvi .b{flex:0 0 22px;height:22px;border-radius:3px;border:1.5px solid var(--linea);
+    display:flex;align-items:center;justify-content:center;font-family:Poppins,sans-serif;
+    font-weight:800;font-size:10.5px;color:var(--gris);background:#fff}
+  .lvi.on .b{background:var(--verde);border-color:var(--verde);color:#fff}
+  .lvx{flex:1 1 auto;border:none;background:transparent;font-family:Inter,sans-serif;
+    font-size:12px;color:var(--negro);padding:4px 5px;border-radius:2px;min-width:0}
+  .lvx:focus{background:#F2F7FB;outline:none}
+  .lvi.on .lvx{color:var(--gris)}
+  .lvr{display:grid;grid-template-columns:1fr 46px 34px 44px;gap:7px;align-items:center;
+    padding:5px 0;border-bottom:1px solid #EDF1F5}
+  .lvn{border:none;background:transparent;font-family:Poppins,sans-serif;font-weight:700;
+    font-size:12px;color:var(--negro);padding:4px 5px;border-radius:2px;min-width:0}
+  .lvn:focus{background:#F2F7FB;outline:none}
+  .lvp{border:1px solid var(--linea);border-radius:3px;font-size:11px;padding:4px 5px;text-align:center}
+  .lvw{font-family:Poppins,sans-serif;font-size:10px;font-weight:700;color:var(--gris);text-align:right}
+  .lvc{font-family:Poppins,sans-serif;font-size:11px;font-weight:800;color:var(--gris);text-align:right}
+  .lvc.v{color:var(--verde)}.lvc.a{color:var(--amar)}.lvc.r{color:var(--rojo)}
+  .lvh{font-size:11px;color:var(--gris);margin-top:11px;line-height:1.45;
+    border-top:1px solid var(--linea);padding-top:10px}
   .escala div{font-family:Poppins,sans-serif;font-size:11px;color:var(--gris);padding:2px 0}
   .escala b{color:var(--cyan);font-weight:800;display:inline-block;width:14px}
   .escala b.e6{color:var(--verde)}
@@ -527,9 +553,9 @@
           <div class="desliza">DESLIZA PARA VER TODAS LAS SEMANAS →</div>
           <div class="scroll"><table id="matriz"></table></div>
           <div class="nota" style="margin:10px 0 0">
-            <strong>Δ semanal</strong> = cuántas etapas avanzó el conjunto de clientes esa semana. Se suma el movimiento de cada uno: un cliente que pasa de 2 a 4 aporta 2. La columna <strong>INICIO</strong> es la etapa donde estaba cada cliente al arrancar; de S1 en adelante solo se registra movimiento.<br>
-            La celda gris del renglón Δ es el <strong>promedio de todas las semanas capturadas</strong> — ese es el número que se compara contra la meta de 3.<br>
-            <strong>7</strong> marca un cliente en riesgo y <strong>8</strong> un soldado caído. Ninguno de los dos cuenta para el Δ; ambos piden una nota de qué pasó.
+            <strong>Cumplimiento semanal</strong> = prioridades cumplidas entre el total del checklist de ese distribuidor. Una prioridad se marca solo cuando quedó cerrada dentro de la semana.<br>
+            <strong>General ponderado</strong> = el promedio de todos los distribuidores, pesado por el peso de cada uno. Un distribuidor con peso 3 pesa el triple que uno con peso 1.<br>
+            La celda del renglón inferior es el <strong>promedio de todas las semanas capturadas</strong> — ese es el número que se compara contra la meta.
           </div>
           <button class="btn" id="addwk">+ SEMANA</button>
         </div>
@@ -628,18 +654,23 @@ const CFG_BASE={
   palTexto:'Lograr <strong>mayor o igual al 80%</strong> de cumplimiento semanal del checklist de fortalecimiento de marca.',
   palNota:'Cada punto se marca solo cuando quedó hecho dentro de la semana. Lo que se empezó pero no se cerró no cuenta.',
   palMeta:80, palUnidad:'%',
-  distribuidores:[{k:'d1',n:'Distribuidor 1',peso:1,items:[
-    'Publicar 2 piezas de contenido técnico dirigidas al cliente final',
-    'Entregar los leads captados de la semana en menos de 48 horas',
-    'Impartir una sesión técnica a su fuerza de ventas',
-    'Entregar material de venta co-marcado (fichas, cotizador, exhibidor)',
-    'Enviar el boletín semanal: disponibilidad, tiempos de entrega y campañas',
-    'Sostener contacto directo — visita o videollamada, no correo',
-    'Dar seguimiento a sus cotizaciones abiertas y registrar el estatus',
-    'Documentar un caso de éxito con un cliente final que él atendió',
-    'Revisar con él las métricas de la semana: leads, cotizaciones, conversión',
-    'Confirmar que sus datos y cobertura están correctos en el localizador'
-  ]}],
+  distribuidores:[
+    {k:'d1',n:'Distribuidor 1',peso:1,items:[
+      'Publicar 2 piezas de contenido técnico dirigidas al cliente final',
+      'Entregar los leads captados de la semana en menos de 48 horas',
+      'Impartir una sesión técnica a su fuerza de ventas',
+      'Entregar material de venta co-marcado (fichas, cotizador, exhibidor)',
+      'Enviar el boletín semanal: disponibilidad, tiempos de entrega y campañas',
+      'Sostener contacto directo — visita o videollamada, no correo',
+      'Dar seguimiento a sus cotizaciones abiertas y registrar el estatus',
+      'Documentar un caso de éxito con un cliente final que él atendió',
+      'Revisar con él las métricas de la semana: leads, cotizaciones, conversión',
+      'Confirmar que sus datos y cobertura están correctos en el localizador']},
+    {k:'d2',n:'Distribuidor 2',peso:1,items:['','','','','']},
+    {k:'d3',n:'Distribuidor 3',peso:1,items:['','','','','']},
+    {k:'d4',n:'Distribuidor 4',peso:1,items:['','','','','']},
+    {k:'d5',n:'Distribuidor 5',peso:1,items:['','','','','']}
+  ],
   palTipo:'checklist',
   personas:[{k:'p1',n:'PERSONA 1',r:'líder'},{k:'p2',n:'PERSONA 2',r:''},{k:'p3',n:'PERSONA 3',r:''}],
   filaLbl:'PRIORIDAD', lineaLbl:'LÍNEA',
@@ -754,7 +785,7 @@ function defaults(){
   if(!D.leads)D.leads=[];
   if(!D.cfg)D.cfg=JSON.parse(JSON.stringify(CFG_BASE));
   if(!D.check)D.check={};
-  if(D.cfgv!==4){
+  if(D.cfgv!==5){
     D.cfg=Object.assign({},D.cfg,{
       semanas:67, inicio:'2026-09-17',
       otiIni:0, otiFin:5000000, uSim:'$', uSuf:'', uMM:true,
@@ -763,13 +794,13 @@ function defaults(){
       palTexto:CFG_BASE.palTexto, palNota:CFG_BASE.palNota,
       filaLbl:CFG_BASE.filaLbl,
       filaLbl:'PRIORIDAD',
-      distribuidores:(D.cfg&&D.cfg.distribuidores&&D.cfg.distribuidores.length)
+      distribuidores:(D.cfg&&D.cfg.distribuidores&&D.cfg.distribuidores.length>1)
         ? D.cfg.distribuidores
         : JSON.parse(JSON.stringify(CFG_BASE.distribuidores))});
     // lo marcado antes pasa al primer distribuidor
     if(D.check&&!D.check.d1&&Object.keys(D.check).some(k=>Array.isArray(D.check[k])))
       D.check={d1:D.check};
-    D.semanas=67; D.cfgv=4;
+    D.semanas=67; D.cfgv=5;
   }
   aplicaCfg();
   D.clients.forEach(c=>{if(c.st[0]==null||c.st[0]==='')c.st[0]=0;});
@@ -926,62 +957,65 @@ function chartOti(){
 /* ---------- gráfica PALANCA ---------- */
 function chartPal(){
   const T=tramo(), NB=T.b-T.a+1;
-  const ancha=NB>24;                      // muchas semanas: la gráfica toma toda la tarjeta
-  const cp=document.getElementById('card-pal');
-  if(cp)cp.classList.toggle('wide',ancha);
-  const X0=40, BE=582;                    // eje y fin del área de barras
-  const span=(BE-X0-4)/NB;                // se reparte todo el ancho disponible
-  const sep=ancha?3.4:2.2;                // aire entre barra y barra
-  const ancho=Math.max(4,Math.min(span-sep,32));
-  const bx=n=>X0+4+(n-T.a)*span+(span-ancho)/2;
-  const base=205;
-
-  const tope=100, u=170/tope;
-
-  const fs=span>=26?10:span>=16?9:span>=10?8.2:7.2;
-  const saltoB=ancha?(span>=10?1:2):(span>=14?1:2);
+  const ANCHO_SEM=34, X0=40, base=205, tope=100, u=170/tope;
+  const wpx=Math.max(320,X0+8+NB*ANCHO_SEM+10);
+  const span=ANCHO_SEM, ancho=span-8;
+  const bx=n=>X0+8+(n-T.a)*span+4;
 
   let bars='',labs='';
   for(let i=T.a;i<=T.b;i++){
-    const d=delta(i);
+    const d=cumpl(i);
     bars+=`<rect x="${bx(i)}" y="${base-META*u}" width="${ancho}" height="${META*u}" fill="#EDF1F5"/>`;
     if(d!=null){const col=d>=META?'#16A47A':d>=META-10?'#E8A33D':'#D64A3C';
       const h=Math.max(2,Math.min(d,tope)*u);
-      bars+=`<rect x="${bx(i)}" y="${base-h}" width="${ancho}" height="${h}" fill="${col}"/>`;}
-    if((i-T.a)%saltoB===0||i===D.week)
-      labs+=`<text x="${bx(i)+ancho/2}" y="222"${i===D.week?' fill="#49C2F1" font-weight="800"':''}>${i}</text>`;
+      bars+=`<rect x="${bx(i)}" y="${base-h}" width="${ancho}" height="${h}" fill="${col}"/>
+             <text x="${bx(i)+ancho/2}" y="${base-h-6}" font-family="Poppins" font-size="9"
+                   font-weight="800" fill="${col}" text-anchor="middle">${d}</text>`;}
+    labs+=`<text x="${bx(i)+ancho/2}" y="222"${i===D.week?' fill="#49C2F1" font-weight="800"':''}>${i}</text>`;
   }
-
   let seps='',bandas='';
   bandasMeses().forEach(({t:m,a,b},i)=>{
-    if(i>0){const xs=bx(a)-(span-ancho)/2-1;
+    if(i>0){const xs=bx(a)-6;
       seps+=`<line x1="${xs}" y1="30" x2="${xs}" y2="212" stroke="#C3CEDA" stroke-width="1"/>`;}
     bandas+=`<text x="${(bx(a)+bx(b)+ancho)/2}" y="239">${m}</text>`;});
 
-  const p=promedio(); let pbar='';
-  const PX=612;                            // centro de la barra de promedio
-  if(p){const col=p.v>=META?'#16A47A':p.v>=META-10?'#E8A33D':'#D64A3C';
-    const h=Math.max(2,Math.min(p.v,tope)*u);
-    pbar=`<rect x="${PX-13}" y="${base-h}" width="26" height="${h}" fill="${col}"/>
-          <text x="${PX}" y="${base-h-7}" font-family="Poppins" font-size="11" font-weight="800" fill="${col}" text-anchor="middle">${Math.round(p.v)}%</text>`;}
-
   const yMeta=base-META*u;
   document.getElementById('palchart').innerHTML=`
-  <svg viewBox="0 0 640 248" role="img" aria-label="Avance por semana contra la meta">
-    <line x1="${X0}" y1="${base}" x2="${BE+4}" y2="${base}" stroke="#082040" stroke-width="2"/>
-    <line x1="${X0}" y1="${Math.min(30,base-tope*u-6)}" x2="${X0}" y2="${base}" stroke="#082040" stroke-width="2"/>
-    <g font-family="Poppins" font-size="9.5" font-weight="700" fill="#6B7A8C" text-anchor="end">
-      ${[0,25,50,75,100].map(v=>
-        `<text x="${X0-6}" y="${base-v*u+4}">${v}%</text>`).join('')}</g>
-    ${seps}${bars}
-    <line x1="${X0}" y1="${yMeta}" x2="${BE+4}" y2="${yMeta}" stroke="#082040" stroke-width="2.5"/>
-    <text x="${BE+2}" y="${yMeta-8}" font-family="Poppins" font-size="11" font-weight="800" fill="#082040" text-anchor="end">META ${META}%</text>
-    <line x1="${BE+11}" y1="${Math.min(30,base-tope*u-6)}" x2="${BE+11}" y2="${base+8}" stroke="#082040" stroke-width="1.5"/>
-    ${pbar}
-    <text x="${PX}" y="222" font-family="Poppins" font-size="8.5" font-weight="800" fill="#082040" text-anchor="middle">PROM</text>
-    <g font-family="Poppins" font-size="${fs}" fill="#6B7A8C" text-anchor="middle">${labs}</g>
-    <g font-family="Poppins" font-size="9" fill="#6B7A8C" text-anchor="middle" letter-spacing="1.2">${bandas}</g>
-  </svg>`;
+  <div class="palrow">
+    <div class="palscroll">
+      <svg viewBox="0 0 ${wpx} 248" style="width:${wpx}px;min-width:100%"
+           role="img" aria-label="Cumplimiento semanal contra la meta">
+        <line x1="${X0}" y1="${base}" x2="${wpx-4}" y2="${base}" stroke="#082040" stroke-width="2"/>
+        <line x1="${X0}" y1="30" x2="${X0}" y2="${base}" stroke="#082040" stroke-width="2"/>
+        <g font-family="Poppins" font-size="9.5" font-weight="700" fill="#6B7A8C" text-anchor="end">
+          ${[0,25,50,75,100].map(v=>`<text x="${X0-6}" y="${base-v*u+4}">${v}%</text>`).join('')}</g>
+        ${seps}${bars}
+        <line x1="${X0}" y1="${yMeta}" x2="${wpx-4}" y2="${yMeta}" stroke="#082040" stroke-width="2.5"/>
+        <g font-family="Poppins" font-size="9.5" fill="#6B7A8C" text-anchor="middle">${labs}</g>
+        <g font-family="Poppins" font-size="9" fill="#6B7A8C" text-anchor="middle" letter-spacing="1.2">${bandas}</g>
+      </svg>
+    </div>
+    <div class="palprom">${promSvg(base,u,tope)}</div>
+  </div>
+  ${NB>16?'<div class="arrastra">← ARRASTRA PARA VER LAS DEMÁS SEMANAS →</div>':''}`;
+}
+function promSvg(base,u,tope){
+  const p=promedio();
+  let b='';
+  if(p){const col=p.v>=META?'#16A47A':p.v>=META-10?'#E8A33D':'#D64A3C';
+    const h=Math.max(2,Math.min(p.v,tope)*u);
+    b=`<rect x="14" y="${base-h}" width="42" height="${h}" fill="${col}"/>
+       <text x="35" y="${base-h-7}" font-family="Poppins" font-size="12" font-weight="800"
+             fill="${col}" text-anchor="middle">${Math.round(p.v)}%</text>`;}
+  return `<svg viewBox="0 0 76 248" role="img" aria-label="Promedio acumulado">
+    <line x1="4" y1="30" x2="4" y2="${base+8}" stroke="#082040" stroke-width="1.5"/>
+    <line x1="4" y1="${base}" x2="72" y2="${base}" stroke="#082040" stroke-width="2"/>
+    <line x1="4" y1="${base-META*u}" x2="72" y2="${base-META*u}" stroke="#082040" stroke-width="2.5"/>
+    <text x="72" y="${base-META*u-8}" font-family="Poppins" font-size="10" font-weight="800"
+          fill="#082040" text-anchor="end">META ${META}%</text>
+    ${b}
+    <text x="35" y="222" font-family="Poppins" font-size="9" font-weight="800"
+          fill="#082040" text-anchor="middle">PROM</text></svg>`;
 }
 
 /* ---------- matriz ---------- */
@@ -1258,16 +1292,27 @@ function pintaSubtabs(){
 function pintaEscala(){
   const e=document.getElementById('escala');
   if(SUB==='gen'){
-    const d=DIS(), sw=d.reduce((a,x)=>a+(Number(x.peso)||1),0)||1;
-    e.innerHTML=d.map(x=>{const p=Number(x.peso)||1;
-      return `<div><b>${Math.round(p/sw*100)}%</b> ${esc(x.n||'Sin nombre')}</div>`;}).join('')
-      +`<div class="esep"><b>${d.length}</b> distribuidores · el general pondera por el peso de cada uno</div>`;
+    const d=DIS(), sw=d.reduce((x,y)=>x+(Number(y.peso)||1),0)||1;
+    e.innerHTML='<div class="lvt">DISTRIBUIDORES · PESO EN EL GENERAL</div>'+
+      d.map((x,i)=>{const c=cumplD(x.k,D.week);
+        const cl=c==null?'':c>=META?'v':c>=META-10?'a':'r';
+        return `<div class="lvr" data-ir="${x.k}">
+          <input class="lvn" data-dnl="${i}" value="${esc(x.n||'').replace(/"/g,'&quot;')}" placeholder="Nombre del distribuidor">
+          <input class="lvp" type="number" min="1" max="20" data-dpl="${i}" value="${Number(x.peso)||1}" title="Peso">
+          <span class="lvw">${Math.round((Number(x.peso)||1)/sw*100)}%</span>
+          <span class="lvc ${cl}">${c==null?'—':c+'%'}</span>
+        </div>`;}).join('')+
+      `<div class="lvh">El peso define cuánto influye cada uno en el ponderado. Toca un nombre para editarlo.</div>`;
     return;}
-  const tot=LIS().length||1;
-  e.innerHTML=`<div><b>${tot}</b> prioridades en el checklist</div>
-    <div><b>${(100/tot).toFixed(0)}%</b> vale cada prioridad cumplida</div>
-    <div class="esep"><b>${Math.ceil(tot*META/100)}</b> es el mínimo semanal para llegar al ${META}%</div>
-    <div><b>${Number(distAct().peso)||1}</b> es su peso dentro del general</div>`;
+  const d=distAct(), L=d.items||[], m=marcas_(d.k,D.week)||[];
+  const n=hechos(D.week)||0, tot=L.length||1;
+  e.innerHTML=`<div class="lvt">PRIORIDADES DE ${esc(d.n||'ESTE DISTRIBUIDOR').toUpperCase()} · SEMANA ${D.week}</div>`+
+    L.map((t,i)=>`<div class="lvi ${m[i]?'on':''}" data-lvck="${i}">
+        <span class="b">${m[i]?'✓':i+1}</span>
+        <input class="lvx" data-prl="${i}" value="${esc(t).replace(/"/g,'&quot;')}" placeholder="Escribe la prioridad ${i+1}">
+      </div>`).join('')+
+    `<div class="lvh"><strong>${n} de ${tot}</strong> cumplidas · cada una vale ${(100/tot).toFixed(0)}%
+      · se necesitan <strong>${Math.ceil(tot*META/100)}</strong> para llegar al ${META}%</div>`;
 }
 function pintaTextos(){
   const c=cfg();
@@ -1356,6 +1401,19 @@ function render(){
 /* ---------- eventos ---------- */
 document.addEventListener('input',e=>{
   const t=e.target;
+  if(t.dataset.prl!=null){
+    const d=distAct(), ix=Number(t.dataset.prl);
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
+      DIS().map(x=>x.k===d.k?Object.assign({},x,{items:x.items.map((v,i)=>i===ix?t.value:v)}):x)});
+    save();return;}
+  if(t.dataset.dnl!=null){const i=Number(t.dataset.dnl);
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
+      DIS().map((x,k)=>k===i?Object.assign({},x,{n:t.value}):x)});
+    save();pintaSubtabs();return;}
+  if(t.dataset.dpl!=null){const i=Number(t.dataset.dpl);
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
+      DIS().map((x,k)=>k===i?Object.assign({},x,{peso:Number(t.value)||1}):x)});
+    save();pintaEscala();matriz();chartPal();pintaSemaforo();return;}
   if(t.dataset.pri!=null){
     const d=distAct(), ix=Number(t.dataset.pri);
     const c=Object.assign({},CFG_BASE,D.cfg||{});
@@ -1579,6 +1637,18 @@ document.addEventListener('click',e=>{
   if(t.dataset.addcm){getArr(t.dataset.addcm).push({});save();comp();}
   if(t.dataset.delcm){const a=getArr(t.dataset.delcm);a.splice(Number(t.dataset.ix),1);
     if(!a.length)a.push({});save();comp();}
+});
+
+/* arrastre horizontal con el mouse */
+document.addEventListener('mousedown',e=>{
+  const sc=e.target.closest&&e.target.closest('.palscroll');
+  if(!sc)return;
+  let x=e.pageX, l=sc.scrollLeft, mov=false;
+  const mv=ev=>{mov=true;sc.scrollLeft=l-(ev.pageX-x);ev.preventDefault();};
+  const up=()=>{document.removeEventListener('mousemove',mv);
+    document.removeEventListener('mouseup',up);};
+  document.addEventListener('mousemove',mv);
+  document.addEventListener('mouseup',up);
 });
 
 /* ---------- arranque ---------- */
