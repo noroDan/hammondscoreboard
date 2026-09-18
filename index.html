@@ -571,7 +571,10 @@
             <strong>General ponderado</strong> = el promedio de todos los distribuidores, pesado por el peso de cada uno. Un distribuidor con peso 3 pesa el triple que uno con peso 1.<br>
             La celda del renglón inferior es el <strong>promedio de todas las semanas capturadas</strong> — ese es el número que se compara contra la meta.
           </div>
-          <button class="btn" id="addwk">+ SEMANA</button>
+          <div class="lbtns" style="margin-top:4px">
+            <button class="btn" id="addwk">+ SEMANA</button>
+            <button class="btn" id="adddist2">+ DISTRIBUIDOR</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1383,6 +1386,7 @@ function otiPane(){
     document.getElementById('oti-vs').textContent='Meta de esta semana: '+money(m);
     pintar('oti',{c:'',t:'SIN DATO'});}
 }
+function refrescaPalanca(){matriz();chartPal();pintaSemaforo();pintaSubtabs();}
 function pintaSemaforo(){
   const d=cumpl(D.week), p=promedio();
   const a=document.getElementById('pal-sem'), b=document.getElementById('pal-prom');
@@ -1548,16 +1552,34 @@ document.addEventListener('click',e=>{
     baja('\ufeff'+f.join('\n'),'text/csv;charset=utf-8','csv');return;}
   if(t.id==='cfgimpb'){const b=document.getElementById('cfgrest');
     b.style.display=b.style.display==='none'?'block':'none';return;}
+  // marcar un paso desde la tabla
   if(t.dataset.ck!=null){
-    const w=t.dataset.w, ix=Number(t.dataset.ck);
-    D.check=D.check||{};
-    if(!Array.isArray(D.check[w]))D.check[w]=[];
-    D.check[w][ix]=!D.check[w][ix];
+    const k=distAct().k, w=String(t.dataset.w), ix=Number(t.dataset.ck);
+    D.check=D.check||{}; if(!D.check[k])D.check[k]={};
+    if(!Array.isArray(D.check[k][w]))D.check[k][w]=[];
+    D.check[k][w][ix]=!D.check[k][w][ix];
     save();
-    t.classList.toggle('on',!!D.check[w][ix]);
-    t.textContent=D.check[w][ix]?'✓':'';
-    matriz();chartPal();pintaSemaforo();
+    t.classList.toggle('on',!!D.check[k][w][ix]);
+    t.textContent=D.check[k][w][ix]?'✓':'';
+    refrescaPalanca();
     return;}
+
+  // marcar un paso desde el panel izquierdo
+  const lv=e.target.closest&&e.target.closest('.lvi');
+  if(lv&&lv.dataset.lvck!=null&&!(e.target.closest&&e.target.closest('.lvx'))){
+    const k=distAct().k, w=String(D.week), ix=Number(lv.dataset.lvck);
+    D.check=D.check||{}; if(!D.check[k])D.check[k]={};
+    if(!Array.isArray(D.check[k][w]))D.check[k][w]=[];
+    D.check[k][w][ix]=!D.check[k][w][ix];
+    save(); pintaEscala(); refrescaPalanca();
+    return;}
+
+  // cambiar de pestaña de distribuidor
+  if(t.dataset.sub){SUB=t.dataset.sub;
+    pintaSubtabs();pintaEscala();refrescaPalanca();return;}
+  if(t.dataset.goto){SUB=t.dataset.goto;
+    pintaSubtabs();pintaEscala();refrescaPalanca();return;}
+
   if(t.dataset.anio){ANIO=Number(t.dataset.anio);render();return;}
   if(t.dataset.tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b===t));
     document.getElementById('tab-marcador').style.display=t.dataset.tab==='marcador'?'':'none';
@@ -1618,7 +1640,13 @@ document.addEventListener('click',e=>{
     if(confirm('¿Borrar la línea "'+(D.lineas[i].n||'sin nombre')+'" y todo lo capturado en ella?')){
       D.lineas.splice(i,1);const nc={};D.lineas.forEach((_,k)=>{nc[k]=D.cob[k>=i?k+1:k]||{};});
       D.cob=nc;save();render();}return;}
-  if(t.id==='addwk'){W++;D.semanas=W;save();llenarSel();render();}
+  if(t.id==='addwk'){W++;D.semanas=W;D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{semanas:W});
+    save();llenarSel();render();return;}
+  if(t.id==='adddist2'){
+    const li=DIS().slice();
+    li.push({k:'d'+Date.now().toString(36),n:'Distribuidor '+(li.length+1),peso:1});
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:li});
+    SUB=li[li.length-1].k; save(); render(); return;}
   if(t.id==='editar'){EDITAR=!EDITAR;t.textContent=EDITAR?'LISTO':'EDITAR LISTA';
     t.style.color=EDITAR?'#D64A3C':'';matriz();return;}
   if(t.id==='limpiar'){
