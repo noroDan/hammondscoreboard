@@ -212,11 +212,12 @@
   .escala{margin-top:16px;border-top:1px solid var(--linea);padding-top:14px}
   .lvt{font-family:Poppins,sans-serif;font-weight:800;font-size:8.5px;letter-spacing:.18em;
     color:var(--gris);margin-bottom:10px}
-  .lvi{display:flex;align-items:center;gap:9px;padding:5px 0;cursor:pointer;border-radius:3px}
+  .lvi{display:flex;align-items:flex-start;gap:9px;padding:6px 4px;cursor:pointer;
+    border-radius:3px;border-bottom:1px solid #EDF1F5}
   .lvi:hover{background:#F2F7FB}
-  .lvi .b{flex:0 0 22px;height:22px;border-radius:3px;border:1.5px solid var(--linea);
+  .lvi .b{flex:0 0 24px;height:24px;border-radius:3px;border:1.5px solid var(--linea);
     display:flex;align-items:center;justify-content:center;font-family:Poppins,sans-serif;
-    font-weight:800;font-size:10.5px;color:var(--gris);background:#fff}
+    font-weight:800;font-size:10.5px;color:var(--gris);background:#fff;margin-top:1px}
   .lvi.on .b{background:var(--verde);border-color:var(--verde);color:#fff}
   .lvi.ro{cursor:default}
   .lvi.ro:hover{background:none}
@@ -224,9 +225,10 @@
   .lvi.ro.on .b{background:var(--verde);border-color:var(--verde);color:#fff}
   .lvi.ro.mid .b{background:#FDF6E9;border-color:var(--amar);color:#8A6417}
   .lvi.ro.low .b{background:#FCF0EE;border-color:var(--rojo);color:#A5382C}
-  .lvx{flex:1 1 auto;border:none;background:transparent;font-family:Inter,sans-serif;
-    font-size:12px;color:var(--negro);padding:4px 5px;border-radius:2px;min-width:0}
-  .lvx:focus{background:#F2F7FB;outline:none}
+  .lvx{flex:1 1 auto;min-width:0;font-family:Inter,sans-serif;font-size:12px;line-height:1.42;
+    color:var(--negro);padding:4px 5px;border-radius:2px;white-space:normal;
+    overflow-wrap:anywhere;cursor:text}
+  .lvx:focus{background:#F2F7FB;outline:1px solid var(--cyan)}
   .lvi.on .lvx{color:var(--gris)}
   .lvr{display:grid;grid-template-columns:1fr 46px 34px 44px;gap:7px;align-items:center;
     padding:5px 0;border-bottom:1px solid #EDF1F5}
@@ -1304,26 +1306,21 @@ function pintaSubtabs(){
 }
 function pintaEscala(){
   const e=document.getElementById('escala'), P=PASOS(), tot=P.length||1;
+  const fila=(i,t,badge,cls)=>`<div class="lvi ${cls}"${cls.includes('ro')?'':` data-lvck="${i}"`}>
+      <span class="b">${badge}</span>
+      <div class="lvx" contenteditable="true" data-pasol="${i}"
+           spellcheck="false">${esc(t)}</div>
+    </div>`;
   if(SUB==='gen'){
-    const d=DIS();
-    e.innerHTML='<div class="lvt">LOS '+tot+' PASOS · CUÁNTOS DISTRIBUIDORES LO CUMPLIERON ESTA SEMANA</div>'+
-      P.map((t,i)=>{
-        let n=0,c=0;
-        d.forEach(x=>{const m=marcas_(x.k,D.week);if(m){c++;if(m[i])n++;}});
-        const cl=!c?'':n===d.length?'on':n>=Math.ceil(d.length/2)?'mid':'low';
-        return `<div class="lvi ro ${cl}">
-          <span class="b">${n}/${d.length}</span>
-          <input class="lvx" data-pasol="${i}" value="${esc(t).replace(/"/g,'&quot;')}" placeholder="Paso ${i+1}">
-        </div>`;}).join('')+
-      `<div class="lvh">El paso que aparece bajo en todos los distribuidores es donde el proceso se está rompiendo. Toca el texto para editarlo — el cambio aplica a los ${d.length} distribuidores.</div>`;
+    e.innerHTML=`<div class="lvt">LOS ${tot} PASOS PARA MOVER A UN DISTRIBUIDOR</div>`+
+      P.map((t,i)=>fila(i,t,i+1,'ro')).join('')+
+      `<div class="lvh">Estos ${tot} pasos son iguales para los ${DIS().length} distribuidores. Cada paso cumplido vale ${(100/tot).toFixed(1)}%; se necesitan <strong>${Math.ceil(tot*META/100)}</strong> para llegar al ${META}%.<br>
+        Para marcarlos, entra a la pestaña del distribuidor. Aquí solo se ve el resultado ponderado de todos.</div>`;
     return;}
   const d=distAct(), m=marcas_(d.k,D.week)||[], n=hechos(D.week)||0;
-  e.innerHTML=`<div class="lvt">LOS ${tot} PASOS PARA MOVER A ${esc(d.n||'ESTE DISTRIBUIDOR').toUpperCase()} · SEMANA ${D.week}</div>`+
-    P.map((t,i)=>`<div class="lvi ${m[i]?'on':''}" data-lvck="${i}">
-        <span class="b">${m[i]?'✓':i+1}</span>
-        <input class="lvx" data-pasol="${i}" value="${esc(t).replace(/"/g,'&quot;')}" placeholder="Paso ${i+1}">
-      </div>`).join('')+
-    `<div class="lvh"><strong>${n} de ${tot}</strong> cumplidos · cada paso vale ${(100/tot).toFixed(1)}%
+  e.innerHTML=`<div class="lvt">${esc(d.n||'ESTE DISTRIBUIDOR').toUpperCase()} · SEMANA ${D.week}</div>`+
+    P.map((t,i)=>fila(i,t,m[i]?'✓':i+1,m[i]?'on':'')).join('')+
+    `<div class="lvh"><strong>${n} de ${tot}</strong> cumplidos esta semana · cada paso vale ${(100/tot).toFixed(1)}%
       · se necesitan <strong>${Math.ceil(tot*META/100)}</strong> para llegar al ${META}%</div>`;
 }
 function pintaTextos(){
@@ -1415,9 +1412,10 @@ document.addEventListener('input',e=>{
   const t=e.target;
   if(t.dataset.pasol!=null){
     const ix=Number(t.dataset.pasol), P=PASOS().slice();
-    P[ix]=t.value;
+    P[ix]=(t.textContent||'').trim();
     D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{pasos:P});
-    save();return;}
+    save();clearTimeout(window._pz);
+    window._pz=setTimeout(()=>{matriz();},600);return;}
   if(t.dataset.dnl!=null){const i=Number(t.dataset.dnl);
     D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
       DIS().map((x,k)=>k===i?Object.assign({},x,{n:t.value}):x)});
@@ -1484,7 +1482,9 @@ document.addEventListener('change',e=>{
     ar[ix]=ar[ix]||{};ar[ix].cumplido=t.checked;save();}
 });
 document.addEventListener('click',e=>{
-  const t=e.target;
+  let t=e.target;
+  const cl=t.closest&&t.closest('[data-sub],[data-anio],[data-tab],[data-goto],[data-lvck],[data-fl],[data-ck]');
+  if(cl)t=cl;
   if(t.id==='cfgb'){const b=document.getElementById('cfgpanel');
     const ab=b.style.display==='none';b.style.display=ab?'':'none';
     if(ab){pintaCfg();b.scrollIntoView({behavior:'smooth',block:'start'});}return;}
