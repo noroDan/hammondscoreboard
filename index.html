@@ -392,6 +392,10 @@
   .gk span{display:block;font-family:Poppins,sans-serif;font-weight:700;font-size:8.5px;
     letter-spacing:.16em;color:var(--gris);margin-top:4px}
   .gh{font-size:11.5px;color:var(--gris);line-height:1.45;border-top:1px solid var(--linea);padding-top:11px}
+  .xfila{border:none;background:none;color:#C3CEDA;font-size:15px;line-height:1;
+    cursor:pointer;padding:2px 4px;flex:0 0 auto;opacity:0;transition:opacity .15s}
+  .lvi:hover .xfila{opacity:1}
+  .xfila:hover{color:var(--rojo)}
   .lvi .sw{font-family:Poppins,sans-serif;font-weight:800;font-size:8.5px;color:var(--verde);
     flex:0 0 auto;padding-top:5px}
   td.ck.hito{background:#16A47A;color:#fff}
@@ -400,7 +404,12 @@
   .com{padding:20px}
   .per{border-bottom:1px solid var(--linea);padding:16px 0}
   .per:last-child{border-bottom:none}
-  .who{font-family:Poppins,sans-serif;font-weight:800;font-size:12px;letter-spacing:.08em;margin-bottom:10px}
+  .who{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .pernom{flex:0 1 210px;border:none;background:transparent;font-family:Poppins,sans-serif;
+    font-weight:800;font-size:12px;letter-spacing:.08em;color:var(--negro);padding:4px 5px;border-radius:2px}
+  .perrol{flex:0 1 130px;border:none;background:transparent;font-family:Poppins,sans-serif;
+    font-weight:600;font-size:9px;letter-spacing:.14em;color:var(--negro);padding:4px 5px;border-radius:2px}
+  .pernom:focus,.perrol:focus{background:#F2F7FB;outline:none}
   .who span{font-size:8.5px;letter-spacing:.14em;color:var(--negro);font-weight:600;margin-left:8px}
   .cline{display:grid;grid-template-columns:1fr 130px 200px 92px 30px;gap:9px;align-items:start;margin-bottom:8px}
   .cump{display:flex;align-items:center;gap:6px;font-family:Poppins,sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--gris);padding-top:10px;white-space:nowrap}
@@ -501,17 +510,12 @@
       </div>
       <div class="cfgrow chk1"><label><input type="checkbox" class="chk" data-cf="uMM"> Abreviar en millones en el eje ($2.9M)</label></div>
 
-      <div class="cfgs">PALANCA · LO QUE CONTROLAMOS</div>
-      <div class="cfgrow"><label>Enunciado</label><textarea data-cf="palTexto"></textarea></div>
-      <div class="cfgrow"><label>Cómo se cuenta</label><textarea data-cf="palNota"></textarea></div>
-      <div class="cfg3">
-        <div><label>Meta semanal</label><input type="number" data-cf="palMeta" min="1"></div>
-        <div><label>Cómo se llama cada fila</label><input type="text" data-cf="filaLbl" placeholder="CLIENTE · PLANTA · TURNO"></div>
-        <div><label>Cómo se llama cada línea</label><input type="text" data-cf="lineaLbl" placeholder="LÍNEA DE VENTA"></div>
-      </div>
+      <div class="cfgs">LAS TRES PALANCAS</div>
+      <div class="cfghelp">El nombre de cada palanca, su enunciado y su meta. Las filas de cada proceso —pasos, colaboradores y datos— se editan directo en el panel izquierdo del marcador.</div>
+      <div id="cfgpalancas"></div>
 
-      <div class="cfgs">DISTRIBUIDORES Y SUS PRIORIDADES</div>
-      <div class="cfghelp">Los <strong>8 pasos</strong> son los mismos para todos y se editan desde el panel izquierdo del marcador. Aquí se define quién está en la lista y el <strong>peso</strong> de cada uno: cuánto influye en el general ponderado. Si un distribuidor vale el doble que otro, ponle 2.</div>
+      <div class="cfgs">DISTRIBUIDORES</div>
+      <div class="cfghelp">Quién está en la lista y el <strong>peso</strong> de cada uno: cuánto influye en el general ponderado. Si un distribuidor vale el doble que otro, ponle 2.</div>
       <div id="cfgdist"></div>
       <button class="btn" id="adddist">+ DISTRIBUIDOR</button>
 
@@ -647,6 +651,7 @@
       </div></div>
     <div class="com">
       <div id="comrows"></div>
+      <button class="btn" id="addper">+ AGREGAR PERSONA</button>
       <div class="nota">Uno o dos por persona. Específico, personal, semanal, y dirigido a la palanca. Cada compromiso registra a qué salto del proceso le está pegando — eso construye el historial de dónde cuesta más mover.</div>
     </div>
     <div class="mant">
@@ -1065,7 +1070,11 @@ function vistaSemana(){
       </select>
       <label class="cump"><input type="checkbox" class="chk" data-cm="${p.k}" data-ix="${ix}" data-f="cumplido" ${c.cumplido?'checked':''}> cumplido</label>
       <button class="btn x" data-delcm="${p.k}" data-ix="${ix}">×</button></div>`).join('');
-    return `<div class="per"><div class="who">${p.n}${p.r?`<span>${p.r}</span>`:''}</div>${lines}
+    return `<div class="per"><div class="who">
+      <input class="pernom" data-pernom="${p.k}" value="${esc(p.n||'').replace(/"/g,'&quot;')}" placeholder="Nombre">
+      <input class="perrol" data-perrol="${p.k}" value="${esc(p.r||'').replace(/"/g,'&quot;')}" placeholder="Rol">
+      ${PERSONAS.length>1?`<button class="xfila" data-xper="${p.k}" title="Quitar del equipo" style="opacity:1">×</button>`:''}
+      </div>${lines}
       <button class="btn add" data-addcm="${p.k}">+ OTRO COMPROMISO</button></div>`;}).join('');
 }
 function vistaHistorial(){
@@ -1234,6 +1243,20 @@ function pintaCfg(){
   document.querySelectorAll('[data-cf]').forEach(el=>{
     const k=el.dataset.cf;
     if(el.type==='checkbox')el.checked=!!c[k];else el.value=c[k]==null?'':c[k];});
+  const cp=document.getElementById('cfgpalancas');
+  if(cp)cp.innerHTML=(c.palancas||[]).map((p,i)=>`
+    <div class="dblk">
+      <div class="dhd" style="grid-template-columns:1fr 92px">
+        <input type="text" data-pn="${i}" value="${esc(p.n||'').replace(/"/g,'&quot;')}" placeholder="Nombre de la palanca">
+        <input type="number" data-pm="${i}" value="${Number(p.meta)||0}" step="0.5" min="0"
+          title="${p.tipo==='tiempo'?'Meta en días':'Meta en %'}">
+      </div>
+      <label style="margin-bottom:4px">ENUNCIADO</label>
+      <textarea data-pt="${i}">${esc(p.texto||'')}</textarea>
+      <label style="margin:8px 0 4px">CÓMO SE CUENTA</label>
+      <textarea data-pnt="${i}">${esc(p.nota||'')}</textarea>
+      <div class="cfghelp" style="margin:8px 0 0">Meta en ${p.tipo==='tiempo'?'<strong>días hábiles</strong> — se gana por debajo':'<strong>porcentaje</strong> — se gana por arriba'}. Tipo: ${p.tipo}.</div>
+    </div>`).join('');
   document.getElementById('cfgdist').innerHTML=(c.distribuidores||[]).map((d,di)=>
     `<div class="dblk">
       <div class="dhd">
@@ -1324,7 +1347,8 @@ function nomDist(k){const d=DIS().find(x=>x.k===k);return d?(d.n||'Sin nombre'):
 
 function pintaEscala(){
   const e=document.getElementById('escala'), P=palAct(), L=filas(), T=L.length||1;
-  const campo=(i,t)=>`<div class="lvx" contenteditable="true" data-fil="${i}" spellcheck="false">${esc(t)}</div>`;
+  const campo=(i,t)=>`<div class="lvx" contenteditable="true" data-fil="${i}" spellcheck="false">${esc(t)}</div>`+
+    `<button class="xfila" data-xfila="${i}" title="Eliminar">×</button>`;
 
   if(P.tipo==='checklist'){
     if(SUB==='gen'){
@@ -1349,7 +1373,8 @@ function pintaEscala(){
     e.innerHTML=`<div class="lvt">QUIÉN RESPONDE</div>`+
       (P.colaboradores||[]).map((c,i)=>`<div class="lvi ro">
         <span class="b">${i+1}</span>
-        <div class="lvx" contenteditable="true" data-colab="${i}" spellcheck="false">${esc(c.n||'')}</div></div>`).join('')+
+        <div class="lvx" contenteditable="true" data-colab="${i}" spellcheck="false">${esc(c.n||'')}</div>
+        <button class="xfila" data-xcolab="${i}" title="Eliminar">×</button></div>`).join('')+
       `<div class="lvgran"><b>${v==null?'—':v}</b><span>días hábiles de promedio ${SUB==='gen'?'en todo el canal':'con '+esc(nomDist(SUB))}</span></div>
        <div class="lvh">Meta: <strong>1 día hábil o menos</strong>. Se captura en la tabla: 0.5 es medio día, 1 es un día completo, 1.5 ya está fuera de meta. Toca un nombre para editarlo.</div>`;
     return;}
@@ -1653,6 +1678,11 @@ function render(){
 /* ---------- eventos ---------- */
 document.addEventListener('input',e=>{
   const t=e.target;
+  if(t.dataset.pernom!=null||t.dataset.perrol!=null){
+    const k=t.dataset.pernom||t.dataset.perrol, campo=t.dataset.pernom?'n':'r';
+    const ps=(cfg().personas||[]).map(x=>x.k===k?Object.assign({},x,{[campo]:t.value}):x);
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{personas:ps});
+    aplicaCfg();save();return;}
   if(t.dataset.tm!=null){
     const w=String(t.dataset.w), ix=Number(t.dataset.tm);
     setCelda(SUB,w,ix, t.value===''?'':Number(t.value));
@@ -1735,17 +1765,25 @@ document.addEventListener('change',e=>{
 });
 document.addEventListener('click',e=>{
   let t=e.target;
-  const cl=t.closest&&t.closest('[data-sub],[data-anio],[data-tab],[data-goto],[data-lvck],[data-fl],[data-ck]');
+  const cl=t.closest&&t.closest('[data-xfila],[data-xcolab],[data-xper],[data-sub],[data-anio],[data-tab],[data-goto],[data-lvck],[data-fl],[data-ck],[data-dt]');
   if(cl)t=cl;
   if(t.id==='cfgb'){const b=document.getElementById('cfgpanel');
     const ab=b.style.display==='none';b.style.display=ab?'':'none';
-    if(ab){pintaCfg();b.scrollIntoView({behavior:'smooth',block:'start'});}return;}
+    if(ab){pintaCfg();if(b.scrollIntoView)b.scrollIntoView({behavior:'smooth',block:'start'});}return;}
   if(t.id==='cfgx'){document.getElementById('cfgpanel').style.display='none';return;}
   if(t.id==='cfgok'){
     const c=Object.assign({},CFG_BASE,D.cfg||{});
     document.querySelectorAll('[data-cf]').forEach(el=>{
       const k=el.dataset.cf;
       c[k]=el.type==='checkbox'?el.checked:(el.type==='number'?Number(el.value):el.value);});
+    c.palancas=(c.palancas||CFG_BASE.palancas).map((p,i)=>{
+      const g=q=>{const e=document.querySelector(`[data-${q}="${i}"]`);return e?e.value:null;};
+      const y=Object.assign({},p);
+      const n=g('pn'); if(n!=null&&n.trim())y.n=n.trim().toUpperCase();
+      const m=g('pm'); if(m!=null&&m!=='')y.meta=Number(m);
+      const tx=g('pt'); if(tx!=null)y.texto=tx;
+      const nt=g('pnt'); if(nt!=null)y.nota=nt;
+      return y;});
     c.distribuidores=leeDist();
     if(!c.distribuidores.length)c.distribuidores=JSON.parse(JSON.stringify(CFG_BASE.distribuidores));
     c.personas=[...document.querySelectorAll('[data-cfp][data-f="n"]')].map((e,i)=>({
@@ -1813,6 +1851,27 @@ document.addEventListener('click',e=>{
     const m=marcasDato(SUB)||[];
     setDato(SUB,ix, Number(m[ix])===w ? null : w);
     refrescaPalanca();return;}
+
+  // eliminar una fila del proceso
+  if(t.dataset.xfila!=null||t.dataset.xcolab!=null){
+    const esC=t.dataset.xcolab!=null, ix=Number(esC?t.dataset.xcolab:t.dataset.xfila);
+    const P=palAct(), L=filas();
+    if(L.length<=1){alert('Debe quedar al menos una fila.');return;}
+    const nom=esC?(L[ix]&&L[ix].n)||'esta persona':L[ix]||'esta fila';
+    if(!confirm('¿Eliminar "'+nom+'"? Se borra también lo capturado en esa fila.'))return;
+    const ps=PALS().map(x=>{if(x.k!==P.k)return x;
+      const y=Object.assign({},x);
+      if(x.tipo==='checklist'){y.pasos=(x.pasos||[]).slice();y.pasos.splice(ix,1);}
+      else if(x.tipo==='datos'){y.campos=(x.campos||[]).slice();y.campos.splice(ix,1);}
+      else{y.colaboradores=(x.colaboradores||[]).slice();y.colaboradores.splice(ix,1);}
+      return y;});
+    // recorrer los datos capturados
+    if(D.dat&&D.dat[P.k]){
+      Object.keys(D.dat[P.k]).forEach(k=>{
+        const o=D.dat[P.k][k];
+        if(Array.isArray(o))o.splice(ix,1);
+        else if(o)Object.keys(o).forEach(w=>{if(Array.isArray(o[w]))o[w].splice(ix,1);});});}
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{palancas:ps});save();refrescaPalanca();return;}
 
   // marcar desde el panel izquierdo
   const lv=e.target.closest&&e.target.closest('.lvi');
@@ -1892,6 +1951,18 @@ document.addEventListener('click',e=>{
       D.cob=nc;save();render();}return;}
   if(t.id==='addwk'){W++;D.semanas=W;D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{semanas:W});
     save();llenarSel();render();return;}
+  if(t.id==='addper'){
+    const ps=(cfg().personas||[]).slice();
+    ps.push({k:'p'+Date.now().toString(36),n:'NUEVA PERSONA',r:''});
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{personas:ps});
+    aplicaCfg();save();comp();return;}
+  if(t.dataset.xper){
+    const k=t.dataset.xper, ps=(cfg().personas||[]).filter(x=>x.k!==k);
+    if(!ps.length){alert('Debe quedar al menos una persona.');return;}
+    const nm=(cfg().personas.find(x=>x.k===k)||{}).n||'esta persona';
+    if(!confirm('¿Quitar a '+nm+' del equipo? Sus compromisos guardados se conservan pero dejan de mostrarse.'))return;
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{personas:ps});
+    aplicaCfg();save();comp();return;}
   if(t.id==='addfila'){
     const P=palAct(), ps=PALS().map(x=>{if(x.k!==P.k)return x;
       const y=Object.assign({},x);
