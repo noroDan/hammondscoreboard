@@ -652,7 +652,7 @@
     <div class="com">
       <div id="comrows"></div>
       <button class="btn" id="addper">+ AGREGAR PERSONA</button>
-      <div class="nota">Uno o dos por persona. Específico, personal, semanal, y dirigido a la palanca. Cada compromiso registra a qué salto del proceso le está pegando — eso construye el historial de dónde cuesta más mover.</div>
+      <div class="nota">Uno o dos por persona. Específico, personal, semanal, y dirigido a la palanca. Cada compromiso registra a qué palanca le está pegando — eso construye el historial de cuál se trabaja más y cuál se queda sin empujar.</div>
     </div>
     <div class="mant">
       <span><b>RESPONSABLE DEL MARCADOR</b><input type="text" id="resp" placeholder="Nombre"></span>
@@ -786,11 +786,8 @@ function aplicaCfg(){
   START=new Date(pz[0],pz[1]-1,pz[2]);
   NET=6;
   PERSONAS=(c.personas||[]).map((p,i)=>({k:p.k||('p'+(i+1)),n:p.n||'',r:p.r||''}));
-  SALTOS=['— ¿a qué palanca le pega? —'];
-  ((c.palancas&&c.palancas.length)?c.palancas:CFG_BASE.palancas).forEach(p=>{
-    const L=p.tipo==='checklist'?(p.pasos||[]):p.tipo==='datos'?(p.campos||[]):[];
-    if(L.length)L.forEach((t,i)=>SALTOS.push(p.n+' · '+(i+1)+'. '+String(t).slice(0,46)));
-    else SALTOS.push(p.n);});
+  const PL=(c.palancas&&c.palancas.length)?c.palancas:CFG_BASE.palancas;
+  SALTOS=['— ¿a qué palanca le pega? —'].concat(PL.map(p=>p.n)).concat(['A LAS TRES']);
 }
 function esc(t){return String(t==null?'':t).replace(/[<>]/g,m=>m==='<'?'&lt;':'&gt;');}
 function anioDe(n){const d=new Date(START);d.setDate(d.getDate()+(n-1)*7);return d.getFullYear();}
@@ -1066,7 +1063,7 @@ function vistaSemana(){
       <textarea data-cm="${p.k}" data-ix="${ix}" data-f="que" placeholder="Qué me comprometo a hacer">${c.que||''}</textarea>
       <select data-cm="${p.k}" data-ix="${ix}" data-f="cuando">${opcSemanas(c.cuando)}</select>
       <select data-cm="${p.k}" data-ix="${ix}" data-f="salto">
-        ${SALTOS.map((s,si)=>`<option value="${si}"${Number(c.salto||0)===si?' selected':''}>${s}</option>`).join('')}
+        ${SALTOS.map((s,si)=>`<option value="${si}"${Number(c.salto||0)===si?' selected':''}>${esc(s)}</option>`).join('')}
       </select>
       <label class="cump"><input type="checkbox" class="chk" data-cm="${p.k}" data-ix="${ix}" data-f="cumplido" ${c.cumplido?'checked':''}> cumplido</label>
       <button class="btn x" data-delcm="${p.k}" data-ix="${ix}">×</button></div>`).join('');
@@ -1093,13 +1090,13 @@ function vistaHistorial(){
         <td style="padding:8px 9px;font-weight:800;color:${c.cumplido?'#16A47A':'#D64A3C'}">${c.cumplido?'SÍ':'NO'}</td>
         <td style="padding:6px"><button class="btn x" data-delh="${w}" data-k="${p.k}" data-ix="${ic}" title="Borrar compromiso" style="border:none;color:#C3CEDA">×</button></td></tr>`;});});
     if(hay)sem.push(`<div class="per"><div class="who">SEMANA ${w} <span>${wkDate(w)}</span></div>
-      <div class="scroll"><table><thead><tr><th class="nm">PERSONA</th><th style="text-align:left">COMPROMISO</th><th>CUÁNDO</th><th style="text-align:left">SALTO</th><th>¿CUMPLIÓ?</th><th></th></tr></thead><tbody>${filas}</tbody></table></div></div>`);
+      <div class="scroll"><table><thead><tr><th class="nm">PERSONA</th><th style="text-align:left">COMPROMISO</th><th>CUÁNDO</th><th style="text-align:left">PALANCA</th><th>¿CUMPLIÓ?</th><th></th></tr></thead><tbody>${filas}</tbody></table></div></div>`);
   }
   let res='';
   const ks=Object.keys(stats);
   if(ks.length){
-    res=`<div class="per"><div class="who">DÓNDE ESTAMOS EMPUJANDO</div>
-      <div class="scroll"><table><thead><tr><th class="nm" style="text-align:left">SALTO DEL PROCESO</th><th>COMPROMISOS</th><th>CUMPLIDOS</th><th>%</th></tr></thead><tbody>
+    res=`<div class="per"><div class="who" style="display:block">DÓNDE ESTAMOS EMPUJANDO</div>
+      <div class="scroll"><table><thead><tr><th class="nm" style="text-align:left">PALANCA</th><th>COMPROMISOS</th><th>CUMPLIDOS</th><th>%</th></tr></thead><tbody>
       ${ks.sort((x,y)=>stats[y].t-stats[x].t).map(k=>{const v=stats[k],pc=Math.round(v.c/v.t*100);
         return `<tr><td class="nm" style="text-align:left;padding:8px 9px;font-weight:700">${k}</td>
         <td style="padding:8px 9px;font-weight:800">${v.t}</td><td style="padding:8px 9px">${v.c}</td>
