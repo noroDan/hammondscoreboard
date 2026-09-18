@@ -145,6 +145,20 @@
   .palprom svg{width:76px;height:248px;display:block}
   .arrastra{font-family:Poppins,sans-serif;font-weight:700;font-size:8.5px;
     letter-spacing:.18em;color:var(--gris);text-align:center;margin-top:8px}
+  .paltabs{display:flex;border-bottom:1px solid var(--linea);overflow-x:auto}
+  .paltabs button{font-family:Poppins,sans-serif;font-weight:800;font-size:9.5px;
+    letter-spacing:.14em;background:#F7F9FC;border:none;border-right:1px solid var(--linea);
+    border-bottom:3px solid transparent;color:var(--gris);padding:14px 20px;cursor:pointer;
+    white-space:nowrap;flex:1 1 auto}
+  .paltabs button.on{background:#fff;color:var(--negro);border-bottom-color:var(--negro)}
+  .paltabs button i{font-style:normal;font-weight:800;font-size:10px;margin-left:8px;opacity:.9}
+  .paltabs button.v i{color:var(--verde)}.paltabs button.a i{color:var(--amar)}
+  .paltabs button.r i{color:var(--rojo)}
+  .filtrod{display:flex;align-items:center;gap:9px;margin-bottom:16px;flex-wrap:wrap}
+  .filtrod label{font-family:Poppins,sans-serif;font-weight:700;font-size:8.5px;
+    letter-spacing:.16em;color:var(--gris)}
+  .filtrod select{flex:1 1 220px;max-width:340px;font-weight:700}
+  .filtrod .btn{margin:0;padding:8px 12px}
   .subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
   .subtabs button{font-family:Poppins,sans-serif;font-weight:700;font-size:9.5px;
     letter-spacing:.1em;border:1px solid var(--linea);background:#fff;color:var(--gris);
@@ -370,6 +384,19 @@
     font-size:12px;color:#A5382C;margin-top:14px;border-radius:0 3px 3px 0;line-height:1.5}
   .rjmal strong{color:#7E2A20}
   @media (max-width:820px){.rjg{grid-template-columns:1fr}.rj{padding:16px}}
+  .gwrap{display:flex;gap:26px;align-items:center;flex-wrap:wrap;padding:6px 0 10px}
+  .gwrap svg{flex:0 1 400px}
+  .gside{flex:1 1 200px;min-width:190px}
+  .gk{margin-bottom:14px}
+  .gk b{display:block;font-family:Poppins,sans-serif;font-weight:800;font-size:26px;line-height:1}
+  .gk span{display:block;font-family:Poppins,sans-serif;font-weight:700;font-size:8.5px;
+    letter-spacing:.16em;color:var(--gris);margin-top:4px}
+  .gh{font-size:11.5px;color:var(--gris);line-height:1.45;border-top:1px solid var(--linea);padding-top:11px}
+  .lvi .sw{font-family:Poppins,sans-serif;font-weight:800;font-size:8.5px;color:var(--verde);
+    flex:0 0 auto;padding-top:5px}
+  td.ck.hito{background:#16A47A;color:#fff}
+  td.ck.on{background:#D9F0E5;color:#0E7355}
+  @media (max-width:820px){.gwrap{gap:14px}.gside{min-width:0}}
   .com{padding:20px}
   .per{border-bottom:1px solid var(--linea);padding:16px 0}
   .per:last-child{border-bottom:none}
@@ -566,6 +593,7 @@
 
   <!-- PALANCA -->
   <div class="card" id="card-pal">
+    <div class="paltabs" id="paltabs"></div>
     <div class="chead">
       <div class="ctag">PALANCA · LO QUE CONTROLAMOS <span class="ysel" id="ysel-pal"></span></div>
       <div class="stgroup">
@@ -589,32 +617,24 @@
         <div class="escala" id="escala"></div>
       </div>
       <div class="pane right">
+        <div class="filtrod">
+          <label>DISTRIBUIDOR</label>
+          <select id="fdist"></select>
+          <button class="btn" id="adddist2">+ DISTRIBUIDOR</button>
+        </div>
         <div id="palchart"></div>
         <div class="tblwrap">
-          <div class="subtabs" id="subtabs"></div>
           <div class="ttl" id="ttl-mat"></div>
-          <div id="recuerda" style="display:none;background:#EAF6EF;border-left:3px solid #16A47A;
-            padding:10px 12px;margin-bottom:12px;font-size:12.5px;color:#1E7F4A;line-height:1.45"></div>
           <div class="desliza">DESLIZA PARA VER TODAS LAS SEMANAS →</div>
           <div class="scroll"><table id="matriz"></table></div>
-          <div class="nota" style="margin:10px 0 0">
-            <strong>Cumplimiento de un distribuidor</strong> = pasos cumplidos entre los 8 del proceso. Cada paso vale 12.5%.<br>
-            <strong>General ponderado</strong> = todos los pasos cumplidos de la semana entre todos los pasos posibles, contando el peso de cada distribuidor. No es un promedio de porcentajes: cada paso que marques, en el distribuidor que sea, mueve el general. Un distribuidor con peso 3 aporta sus pasos tres veces, arriba y abajo de la cuenta.<br>
-            La celda del renglón inferior es el <strong>promedio de todas las semanas capturadas</strong> — ese es el número que se compara contra la meta.
-          </div>
-          <div class="lbtns" style="margin-top:4px">
+          <div class="nota" id="nota-mat" style="margin:10px 0 0"></div>
+          <div class="lbtns" style="margin-top:10px">
             <button class="btn" id="addwk">+ SEMANA</button>
-            <button class="btn" id="adddist2">+ DISTRIBUIDOR</button>
+            <button class="btn" id="addfila">+ FILA</button>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- REGLA DEL JUEGO -->
-  <div class="card">
-    <div class="chead"><div class="ctag">LA REGLA DEL JUEGO · CÓMO SE MUEVE EL MARCADOR</div></div>
-    <div class="rj" id="reglas"></div>
   </div>
 
   <!-- COMPROMISOS -->
@@ -705,19 +725,7 @@ const CFG_BASE={
   otiNota:'Describe qué se está midiendo.',
   otiIni:0, otiFin:5000000, inicio:'2026-09-17', semanas:67,
   uSim:'$', uSuf:'', uMM:true,
-  palTexto:'Lograr <strong>mayor o igual al 80%</strong> de cumplimiento semanal del checklist de fortalecimiento de marca.',
-  palNota:'Cada punto se marca solo cuando quedó hecho dentro de la semana. Lo que se empezó pero no se cerró no cuenta.',
-  palMeta:80, palUnidad:'%',
-  pasos:[
-    'Contacto directo sostenido — visita o videollamada, no correo',
-    'Capacitación técnica a su fuerza de ventas',
-    'Material de venta co-marcado entregado y en uso',
-    'Leads de la semana entregados en menos de 48 horas',
-    'Contenido técnico publicado que le manda demanda',
-    'Seguimiento a sus cotizaciones abiertas, con estatus registrado',
-    'Caso de éxito documentado con un cliente final que él atendió',
-    'Revisión de métricas con él: leads, cotizaciones y conversión'
-  ],
+  palMeta:80,
   distribuidores:[
     {k:'d1',n:'Distribuidor 1',peso:1},
     {k:'d2',n:'Distribuidor 2',peso:1},
@@ -725,7 +733,36 @@ const CFG_BASE={
     {k:'d4',n:'Distribuidor 4',peso:1},
     {k:'d5',n:'Distribuidor 5',peso:1}
   ],
-  palTipo:'checklist',
+  palancas:[
+   {k:'p1',n:'FORTALECIMIENTO DE MARCA',tipo:'checklist',meta:80,
+    texto:'Lograr <strong>80% o más</strong> de cumplimiento semanal del checklist de fortalecimiento de marca.',
+    nota:'Cada paso se marca solo cuando quedó cerrado dentro de la semana. Lo que se empezó pero no se cerró no cuenta.',
+    pasos:[
+     'Contacto directo sostenido — visita o videollamada, no correo',
+     'Capacitación técnica a su fuerza de ventas',
+     'Material de venta co-marcado entregado y en uso',
+     'Leads de la semana entregados en menos de 48 horas',
+     'Contenido técnico publicado que le manda demanda',
+     'Seguimiento a sus cotizaciones abiertas, con estatus registrado',
+     'Caso de éxito documentado con un cliente final que él atendió',
+     'Revisión de métricas con él: leads, cotizaciones y conversión']},
+   {k:'p2',n:'TIEMPO DE RESPUESTA',tipo:'tiempo',meta:1,
+    texto:'Reducir el tiempo de respuesta a distribuidores a <strong>no más de 1 día hábil</strong>, o confirmar de recibido el mismo día.',
+    nota:'Se captura en días hábiles: 0.5 es medio día, 1 es un día completo. Arriba de 1 el velocímetro se va al rojo. Cuenta desde que entra la solicitud hasta que sale la respuesta o el acuse.',
+    colaboradores:[{k:'c1',n:'Nombre 1'},{k:'c2',n:'Nombre 2'},{k:'c3',n:'Nombre 3'},{k:'c4',n:'Nombre 4'}]},
+   {k:'p3',n:'HIT RATE',tipo:'datos',meta:100,
+    texto:'Avanzar una etapa por semana en la <strong>recopilación de datos</strong> que permite calcular el hit rate del canal.',
+    nota:'Cada dato recopilado se marca una sola vez y ya no se pierde: la línea solo sube. Cuando la base está completa, el hit rate se puede calcular por distribuidor.',
+    campos:[
+     'Cotizaciones emitidas al mes',
+     'Cotizaciones ganadas al mes',
+     'Ticket promedio por cotización',
+     'Tiempo promedio de cierre',
+     'Razones de pérdida documentadas',
+     'Mix de producto que realmente vende',
+     'Competidores con los que pelea cada zona',
+     'Cartera de clientes finales por segmento']}
+  ],
   personas:[{k:'p1',n:'PERSONA 1',r:'líder'},{k:'p2',n:'PERSONA 2',r:''},{k:'p3',n:'PERSONA 3',r:''}],
   filaLbl:'PRIORIDAD', lineaLbl:'LÍNEA',
   modLeads:false, modConvo:false, modLineas:true
@@ -744,9 +781,11 @@ function aplicaCfg(){
   START=new Date(pz[0],pz[1]-1,pz[2]);
   NET=6;
   PERSONAS=(c.personas||[]).map((p,i)=>({k:p.k||('p'+(i+1)),n:p.n||'',r:p.r||''}));
-  SALTOS=['— ¿a qué paso le pega? —'];
-  ((c.pasos&&c.pasos.length)?c.pasos:CFG_BASE.pasos).forEach((t,i)=>
-    SALTOS.push((i+1)+' · '+String(t).slice(0,60)));
+  SALTOS=['— ¿a qué palanca le pega? —'];
+  ((c.palancas&&c.palancas.length)?c.palancas:CFG_BASE.palancas).forEach(p=>{
+    const L=p.tipo==='checklist'?(p.pasos||[]):p.tipo==='datos'?(p.campos||[]):[];
+    if(L.length)L.forEach((t,i)=>SALTOS.push(p.n+' · '+(i+1)+'. '+String(t).slice(0,46)));
+    else SALTOS.push(p.n);});
 }
 function esc(t){return String(t==null?'':t).replace(/[<>]/g,m=>m==='<'?'&lt;':'&gt;');}
 function anioDe(n){const d=new Date(START);d.setDate(d.getDate()+(n-1)*7);return d.getFullYear();}
@@ -767,7 +806,7 @@ function bandasMeses(){
   return g.map(o=>({t:MESES[o.m].toUpperCase(),a:o.a,b:o.b}));}
 
 let D={clients:[],cobrado:{},commits:{},convo:[],week:1,resp:'',modo:'nuevo',lineas:null,cob:null,leads:null,cfg:null};
-let VISTA='semana', EDITAR=false, ANIO=0, SUB='gen';
+let VISTA='semana', EDITAR=false, ANIO=0, SUB='gen', PAL='p1';
 
 function wkDate(n){const d=new Date(START);d.setDate(d.getDate()+(n-1)*7);return d.getDate()+' '+MESES[d.getMonth()];}
 function metaOti(n){return Math.min(OTI_FIN,OTI_INI+(n-1)*PASO);}
@@ -839,7 +878,8 @@ function defaults(){
   if(!D.leads)D.leads=[];
   if(!D.cfg)D.cfg=JSON.parse(JSON.stringify(CFG_BASE));
   if(!D.check)D.check={};
-  if(D.cfgv!==8){
+  if(!D.dat)D.dat={};
+  if(D.cfgv!==9){
     D.cfg=Object.assign({},D.cfg,{
       semanas:67, inicio:'2026-09-17',
       otiIni:0, otiFin:5000000, uSim:'$', uSuf:'', uMM:true,
@@ -855,7 +895,9 @@ function defaults(){
     // lo marcado antes pasa al primer distribuidor
     if(D.check&&!D.check.d1&&Object.keys(D.check).some(k=>Array.isArray(D.check[k])))
       D.check={d1:D.check};
-    D.semanas=67; D.cfgv=8;
+    D.semanas=67; D.cfgv=9;
+    D.cfg.palancas=JSON.parse(JSON.stringify(CFG_BASE.palancas));
+    if(D.check&&!D.dat){D.dat={p1:D.check};}
   }
   aplicaCfg();
   D.clients.forEach(c=>{if(c.st[0]==null||c.st[0]==='')c.st[0]=0;});
@@ -900,237 +942,102 @@ function sincronizar(){
 
 /* ---------- cálculo ---------- */
 function DIS(){return (cfg().distribuidores||[]);}
-function distAct(){const d=DIS();return d.find(x=>x.k===SUB)||d[0]||{k:'d1',n:'',peso:1,items:[]};}
-function PASOS(){const p=cfg().pasos;return (p&&p.length)?p:CFG_BASE.pasos;}
-function LIS(){return PASOS();}
-function marcas_(k,w){const o=D.check&&D.check[k];const a=o&&o[w];return Array.isArray(a)?a:null;}
-function hechosD(k,w,tot){const a=marcas_(k,w);if(!a)return null;
-  let n=0;for(let i=0;i<tot;i++)if(a[i])n++;return n;}
-function cumplD(k,w){const t=PASOS().length;if(!t)return null;
-  const n=hechosD(k,w,t);return n==null?null:Math.round(n/t*100);}
-function totalGen(w){
-  const T=PASOS().length, d=DIS();
-  let hechos=0, posibles=0, algo=false;
-  d.forEach(x=>{
-    const p=Number(x.peso)||1, m=marcas_(x.k,w);
-    posibles+=T*p;
-    if(m){algo=true;let n=0;for(let i=0;i<T;i++)if(m[i])n++;hechos+=n*p;}
-  });
-  return algo?{hechos:hechos,posibles:posibles}:null;}
-function cumplGen(w){const t=totalGen(w);
-  return t&&t.posibles?Math.round(t.hechos/t.posibles*100):null;}
-function hechos(w){return hechosD(distAct().k,w,PASOS().length);}
-function cumpl(w){return SUB==='gen'?cumplGen(w):cumplD(distAct().k,w);}
-function etapaActual(c){
-  for(let i=W;i>=0;i--){const v=c.st[i];if(v!=null&&v!=='')return Number(v);}
-  return 0;}
-function cerrado(c){return etapaActual(c)===NET;}
-function riesgo(c){return etapaActual(c)===NET+1;}
-function caido(c){return etapaActual(c)===NET+2;}
-function fuera(c){const e=etapaActual(c);return e===NET+1||e===NET+2;}
-function etapaPrev(c,w){
-  for(let i=w-1;i>=0;i--){const v=c.st[i];if(v!=null&&v!==''&&Number(v)<=NET)return Number(v);}
-  return 0;
-}
-function delta(w){return cumpl(w);}
-function promedio(){
-  let s=0,n=0;
-  for(let i=1;i<=W;i++){const d=cumpl(i);if(d!=null){s+=d;n++;}}
-  return n?{v:s/n,n:n}:null;
-}
-function estado(real,meta,gan,perd){
-  if(real==null)return {c:'',t:'SIN DATO'};
-  if(real>=meta)return {c:'v',t:gan};
-  if(real>=meta-10)return {c:'a',t:'EN RIESGO'};
-  return {c:'r',t:perd};
-}
-function pintar(pre,est){
-  ['v','a','r'].forEach(k=>{const el=document.getElementById('l-'+pre+'-'+k);
-    if(el)el.className='lamp'+(est.c===k?' on-'+k:'');});
-  const t=document.getElementById(pre+'-txt');
-  t.textContent=est.t;
-  t.style.color=est.c==='v'?'var(--verde)':est.c==='a'?'var(--amar)':est.c==='r'?'var(--rojo)':'var(--gris)';
-}
+function PALS(){const p=cfg().palancas;return (p&&p.length)?p:CFG_BASE.palancas;}
+function palAct(){const p=PALS();return p.find(x=>x.k===PAL)||p[0];}
+function TIPO(){return palAct().tipo;}
+function metaP(){return Number(palAct().meta)||1;}
+function filas(){const P=palAct();
+  return P.tipo==='checklist'?(P.pasos||[]):P.tipo==='datos'?(P.campos||[]):(P.colaboradores||[]);}
+function pesoTot(){return DIS().reduce((a,x)=>a+(Number(x.peso)||1),0)||1;}
 
-/* ---------- gráfica OTI ---------- */
-function chartOti(){
-  const marcas=[],rango=OTI_FIN-OTI_INI;
-  for(let i=0;i<=4;i++)marcas.push(OTI_INI+rango*i/4);
-  const etiq=marcas.map(v=>mm(v));
-  const largo=etiq.reduce((a,b)=>Math.max(a,b.length),0);
-  const MX=Math.min(150,Math.max(58,26+largo*6.4));
-  const T=tramo(), NS=Math.max(1,T.b-T.a);
-  const x=n=>MX+(n-T.a)*((618-MX)/NS);
-  const y=v=>Math.max(32,Math.min(250,250-((v-OTI_INI)/(rango||1))*212));
-  let grid='',ylab='';
-  marcas.forEach((v,i)=>{grid+=`<line x1="${MX}" y1="${y(v)}" x2="618" y2="${y(v)}" stroke="#E6ECF2" stroke-width="1"/>`;
-    ylab+=`<text x="${MX-6}" y="${y(v)+4}">${etiq[i]}</text>`;});
+/* ---- almacén por palanca ---- */
+function celdas(k,w){const o=D.dat&&D.dat[PAL]&&D.dat[PAL][k];const a=o&&o[w];
+  return Array.isArray(a)?a:null;}
+function setCelda(k,w,ix,v){
+  D.dat=D.dat||{}; D.dat[PAL]=D.dat[PAL]||{}; D.dat[PAL][k]=D.dat[PAL][k]||{};
+  if(!Array.isArray(D.dat[PAL][k][w]))D.dat[PAL][k][w]=[];
+  D.dat[PAL][k][w][ix]=v; save();}
+function marcasDato(k){const o=D.dat&&D.dat.p3&&D.dat.p3[k];return Array.isArray(o)?o:null;}
+function setDato(k,ix,v){
+  D.dat=D.dat||{}; D.dat.p3=D.dat.p3||{};
+  if(!Array.isArray(D.dat.p3[k]))D.dat.p3[k]=[];
+  D.dat.p3[k][ix]=v; save();}
 
-  // separadores de mes + bandas
-  let seps='',bandas='';
-  bandasMeses().forEach(({t:m,a,b},i)=>{
-    if(i>0){const xs=x(a)-(((618-MX)/NS)/2);
-      seps+=`<line x1="${xs}" y1="32" x2="${xs}" y2="262" stroke="#DCDCDC" stroke-width="1"/>`;}
-    bandas+=`<text x="${(x(a)+x(b))/2}" y="284">${m}</text>`;});
+/* ---- P1 · checklist ---- */
+function p1Dist(k,w){const T=filas().length;if(!T)return null;
+  const m=celdas(k,w);if(!m)return null;
+  let n=0;for(let i=0;i<T;i++)if(m[i])n++;return Math.round(n/T*100);}
+function p1Gen(w){const T=filas().length,d=DIS();
+  let h=0,p=0,algo=false;
+  d.forEach(x=>{const pe=Number(x.peso)||1;p+=T*pe;const m=celdas(x.k,w);
+    if(m){algo=true;let n=0;for(let i=0;i<T;i++)if(m[i])n++;h+=n*pe;}});
+  return algo&&p?{v:Math.round(h/p*100),h:h,p:p}:null;}
 
-  // marcas y numero de TODAS las semanas
-  let ticks='',labs='';
-  const salto=NS>26?Math.ceil((NS+1)/26):1;
-  for(let i=T.a;i<=T.b;i++){
-    ticks+=`<line x1="${x(i)}" y1="250" x2="${x(i)}" y2="256"/>`;
-    if((i-T.a)%salto===0||i===D.week)
-      labs+=`<text x="${x(i)}" y="268"${i===D.week?' fill="#082040" font-weight="800"':''}>${i}</text>`;}
+/* ---- P2 · tiempo de respuesta ---- */
+function p2Dist(k,w){const m=celdas(k,w);if(!m)return null;
+  let s=0,n=0;m.forEach(v=>{if(v!==''&&v!=null&&!isNaN(v)){s+=Number(v);n++;}});
+  return n?Math.round(s/n*100)/100:null;}
+function p2Gen(w){const d=DIS();let s=0,p=0;
+  d.forEach(x=>{const v=p2Dist(x.k,w);if(v!=null){const pe=Number(x.peso)||1;s+=v*pe;p+=pe;}});
+  return p?Math.round(s/p*100)/100:null;}
 
-  let metaPts=[];
-  for(let i=T.a;i<=T.b;i++)metaPts.push(x(i)+','+y(metaOti(i)));
-  metaPts=metaPts.join(' ');
+/* ---- P3 · recopilación de datos (acumulativo, solo sube) ---- */
+function p3Dist(k,w){const T=filas().length;if(!T)return null;
+  const m=marcasDato(k);if(!m)return 0;
+  let n=0;for(let i=0;i<T;i++)if(m[i]&&Number(m[i])<=w)n++;
+  return Math.round(n/T*100);}
+function p3Gen(w){const T=filas().length,d=DIS();
+  let h=0,p=0;
+  d.forEach(x=>{const pe=Number(x.peso)||1;p+=T*pe;const m=marcasDato(x.k)||[];
+    for(let i=0;i<T;i++)if(m[i]&&Number(m[i])<=w)h+=pe;});
+  return p?{v:Math.round(h/p*100),h:h,p:p}:null;}
 
-  // puntos
-  let pts=[],ult=null;
-  for(let i=T.a;i<=T.b;i++){const v=valOti(i);
-    if(v!=null){pts.push([x(i),y(v),i,v]);ult=[x(i),y(v),i,v];}}
-  const real=pts.length>1?`<polyline fill="none" stroke="#49C2F1" stroke-width="3.5" stroke-linejoin="round" points="${pts.map(p=>p[0]+','+p[1]).join(' ')}"/>`:'';
-  const dots=pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#49C2F1"/>`).join('');
-
-  // guias del ultimo punto: baja a la semana y cruza al monto
-  let guia='';
-  if(ult){
-    guia=`<line x1="${ult[0]}" y1="${ult[1]}" x2="${ult[0]}" y2="250" stroke="#49C2F1" stroke-width="1.2" stroke-dasharray="3,3"/>
-    <line x1="${MX}" y1="${ult[1]}" x2="${ult[0]}" y2="${ult[1]}" stroke="#49C2F1" stroke-width="1.2" stroke-dasharray="3,3"/>
-    <circle cx="${ult[0]}" cy="${ult[1]}" r="6" fill="#fff" stroke="#49C2F1" stroke-width="3"/>
-    <rect x="${Math.max(MX,Math.min(ult[0]-33,552))}" y="${Math.max(ult[1]-30,6)}" width="66" height="19" rx="2" fill="#49C2F1"/>
-    <text x="${Math.max(MX+33,Math.min(ult[0],585))}" y="${Math.max(ult[1]-16,20)}" font-family="Poppins" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">S${ult[2]} · ${wkDate(ult[2])}</text>`;}
-
-  document.getElementById('otichart').innerHTML=`
-  <svg viewBox="0 0 640 292" role="img" aria-label="Cobrado acumulado contra linea de meta, semana a semana">
-    <rect x="${x(D.week)-13}" y="32" width="26" height="218" fill="var(--activa)"/>
-    ${grid}${seps}
-    <line x1="${MX}" y1="250" x2="618" y2="250" stroke="#082040" stroke-width="2"/>
-    <line x1="${MX}" y1="32" x2="${MX}" y2="250" stroke="#082040" stroke-width="2"/>
-    <polyline fill="none" stroke="#082040" stroke-width="2.5" stroke-dasharray="8,5" points="${metaPts}"/>
-    ${real}${dots}${guia}
-    <g stroke="#C3CEDA" stroke-width="1">${ticks}</g>
-    <g font-family="Poppins" font-size="9.5" font-weight="700" fill="#6B7A8C" text-anchor="end">${ylab}</g>
-    <g font-family="Poppins" font-size="8" fill="#6B7A8C" text-anchor="middle">${labs}</g>
-    <g font-family="Poppins" font-size="9" fill="#6B7A8C" text-anchor="middle" letter-spacing="1.2">${bandas}</g>
-  </svg>`;
-}
-
-/* ---------- gráfica PALANCA ---------- */
-function chartPal(){
-  const T=tramo(), NB=T.b-T.a+1;
-  const cont=document.getElementById('palchart');
-  const disp=Math.max(360,(cont?cont.clientWidth:900)-80);   // descuenta la columna PROM
-  const X0=40, base=205, tope=100, u=170/tope;
-  const ANCHO_SEM=Math.max(34,(disp-X0-18)/NB);
-  const wpx=Math.round(X0+8+NB*ANCHO_SEM+10);
-  const span=ANCHO_SEM, ancho=Math.min(span-8,54);
-  const bx=n=>X0+8+(n-T.a)*span+4;
-
-  let bars='',labs='';
-  for(let i=T.a;i<=T.b;i++){
-    const d=cumpl(i);
-    bars+=`<rect x="${bx(i)}" y="${base-META*u}" width="${ancho}" height="${META*u}" fill="#EDF1F5"/>`;
-    if(d!=null){const col=d>=META?'#16A47A':d>=META-10?'#E8A33D':'#D64A3C';
-      const h=Math.max(2,Math.min(d,tope)*u);
-      bars+=`<rect x="${bx(i)}" y="${base-h}" width="${ancho}" height="${h}" fill="${col}"/>
-             <text x="${bx(i)+ancho/2}" y="${Math.max(44,base-h-6)}" font-family="Poppins" font-size="9"
-                   font-weight="800" fill="${col}" text-anchor="middle">${d}%</text>`;}
-    labs+=`<text x="${bx(i)+ancho/2}" y="222"${i===D.week?' fill="#082040" font-weight="800"':''}>${i}</text>`;
-  }
-  let seps='',bandas='';
-  bandasMeses().forEach(({t:m,a,b},i)=>{
-    if(i>0){const xs=bx(a)-6;
-      seps+=`<line x1="${xs}" y1="30" x2="${xs}" y2="212" stroke="#C3CEDA" stroke-width="1"/>`;}
-    bandas+=`<text x="${(bx(a)+bx(b)+ancho)/2}" y="239">${m}</text>`;});
-
-  const yMeta=base-META*u;
-  document.getElementById('palchart').innerHTML=`
-  <div class="palrow">
-    <div class="palscroll">
-      <svg viewBox="0 0 ${wpx} 248" style="width:${wpx}px;height:248px"
-           role="img" aria-label="Cumplimiento semanal contra la meta">
-        <line x1="${X0}" y1="${base}" x2="${wpx-4}" y2="${base}" stroke="#082040" stroke-width="2"/>
-        <line x1="${X0}" y1="30" x2="${X0}" y2="${base}" stroke="#082040" stroke-width="2"/>
-        <g font-family="Poppins" font-size="9.5" font-weight="700" fill="#6B7A8C" text-anchor="end">
-          ${[0,25,50,75,100].map(v=>`<text x="${X0-6}" y="${base-v*u+4}">${v}%</text>`).join('')}</g>
-        ${seps}${bars}
-        <line x1="${X0}" y1="${yMeta}" x2="${wpx-4}" y2="${yMeta}" stroke="#082040" stroke-width="2.5"/>
-        <text x="${wpx-6}" y="20" font-family="Poppins" font-size="10" font-weight="800"
-              fill="#082040" text-anchor="end">META ${META}%</text>
-        <g font-family="Poppins" font-size="9.5" fill="#6B7A8C" text-anchor="middle">${labs}</g>
-        <g font-family="Poppins" font-size="9" fill="#6B7A8C" text-anchor="middle" letter-spacing="1.2">${bandas}</g>
-      </svg>
-    </div>
-    <div class="palprom">${promSvg(base,u,tope)}</div>
-  </div>
-  ${NB>16?'<div class="arrastra">← ARRASTRA PARA VER LAS DEMÁS SEMANAS →</div>':''}`;
-}
-function promSvg(base,u,tope){
-  const p=promedio();
-  let b='';
-  if(p){const col=p.v>=META?'#16A47A':p.v>=META-10?'#E8A33D':'#D64A3C';
-    const h=Math.max(2,Math.min(p.v,tope)*u);
-    b=`<rect x="14" y="${base-h}" width="42" height="${h}" fill="${col}"/>
-       <text x="35" y="${Math.max(44,base-h-7)}" font-family="Poppins" font-size="12" font-weight="800"
-             fill="${col}" text-anchor="middle">${Math.round(p.v)}%</text>`;}
-  return `<svg viewBox="0 0 76 248" role="img" aria-label="Promedio acumulado">
-    <line x1="4" y1="30" x2="4" y2="${base+8}" stroke="#082040" stroke-width="1.5"/>
-    <line x1="4" y1="${base}" x2="72" y2="${base}" stroke="#082040" stroke-width="2"/>
-    <line x1="4" y1="${base-META*u}" x2="72" y2="${base-META*u}" stroke="#082040" stroke-width="2.5"/>
-    <text x="38" y="20" font-family="Poppins" font-size="10" font-weight="800"
-          fill="#082040" text-anchor="middle">META ${META}%</text>
-    ${b}
-    <text x="35" y="222" font-family="Poppins" font-size="9" font-weight="800"
-          fill="#082040" text-anchor="middle">PROM</text></svg>`;
-}
-
-/* ---------- matriz ---------- */
-function matriz(){
-  const T=tramo();
-  let h=`<thead><tr><th class="nm">${SUB==='gen'
-      ? 'DISTRIBUIDOR'
-      : esc(distAct().n||'DISTRIBUIDOR')+' · LOS '+PASOS().length+' PASOS'}</th>`;
-  for(let i=T.a;i<=T.b;i++)h+=`<th class="${i===D.week?'cur':''}">S${i}</th>`;
-  h+='</tr></thead><tbody>';
-
+/* ---- valor unificado ---- */
+function valSem(w){
+  const t=TIPO();
   if(SUB==='gen'){
-    DIS().forEach(d=>{
-      const c=cumplD(d.k,D.week);
-      const cls=c==null?'':c>=META?'v':c>=META-10?'a':'r';
-      h+=`<tr><td class="nm"><div class="cli">
-          <span class="pz">×${Number(d.peso)||1}</span>
-          <span class="txt dnom" data-goto="${d.k}">${esc(d.n||'Sin nombre')}</span>
-          <span class="hoy ${cls}">${c==null?'—':c+'%'}</span></div></td>`;
-      for(let i=T.a;i<=T.b;i++){const v=cumplD(d.k,i);
-        const cl=v==null?'':v>=META?'v':v>=META-10?'a':'r';
-        h+=`<td class="${cl} ${i===D.week?'cur':''}">${v==null?'—':v+'%'}</td>`;}
-      h+='</tr>';});
-  }else{
-    PASOS().forEach((t,ix)=>{
-      h+=`<tr><td class="nm"><div class="cli"><span class="num">${ix+1}</span>
-          <span class="txt">${esc(t)}</span></div></td>`;
-      for(let i=T.a;i<=T.b;i++){
-        const on=(marcas_(distAct().k,i)||[])[ix]===true;
-        h+=`<td class="ck ${on?'on':''} ${i===D.week?'cur':''}" data-ck="${ix}" data-w="${i}">${on?'✓':''}</td>`;}
-      h+='</tr>';});
-  }
+    if(t==='checklist'){const g=p1Gen(w);return g?g.v:null;}
+    if(t==='tiempo')return p2Gen(w);
+    const g=p3Gen(w);return g?g.v:null;}
+  if(t==='checklist')return p1Dist(SUB,w);
+  if(t==='tiempo')return p2Dist(SUB,w);
+  return p3Dist(SUB,w);}
+function valDist(k,w){
+  const t=TIPO();
+  return t==='checklist'?p1Dist(k,w):t==='tiempo'?p2Dist(k,w):p3Dist(k,w);}
+function promedio(){
+  if(TIPO()==='datos'){const v=valSem(D.week);return v==null?null:{v:v,n:1};}
+  let s=0,n=0;
+  for(let i=1;i<=W;i++){const d=valSem(i);if(d!=null){s+=d;n++;}}
+  return n?{v:s/n,n:n}:null;}
+function metaRampa(w){return Math.min(100,Math.round(w/Math.max(1,W)*100));}
+function tono(v,w){
+  if(v==null)return '';
+  const t=TIPO(), m=metaP();
+  if(t==='tiempo')return v<=m?'v':v<=m*1.25?'a':'r';
+  if(t==='datos'){const r=metaRampa(w==null?D.week:w);
+    return v>=r?'v':v>=r-15?'a':'r';}
+  return v>=m?'v':v>=m-10?'a':'r';}
+function fmt(v){if(v==null)return '—';
+  return TIPO()==='tiempo'?(v+' d'):(v+'%');}
 
-  const pr=promedio();
-  const pc=!pr?'':pr.v>=META?'v':pr.v>=META-10?'a':'r';
-  h+=`<tr class="delta"><td class="nm">
-      <span class="prom ${pc}"><b>${pr?Math.round(pr.v)+'%':'—'}</b><i>PROM</i></span>
-      <span class="dl">${SUB==='gen'?'GENERAL PONDERADO':'CUMPLIMIENTO DE '+esc(distAct().n||'').toUpperCase()}</span></td>`;
-  for(let i=T.a;i<=T.b;i++){const d=cumpl(i);
-    const cl=d==null?'':d>=META?'v':d>=META-10?'a':'r';
-    const g=SUB==='gen'?totalGen(i):null;
-    const tip=g?` title="${g.hechos} de ${g.posibles} pasos"`:'';
-    h+=`<td class="${cl}"${tip}>${d==null?'—':d+'%'}</td>`;}
-  h+='</tr></tbody>';
-  document.getElementById('matriz').innerHTML=h;
+/* ---- pestañas de palanca y filtro ---- */
+function pintaPaltabs(){
+  document.getElementById('paltabs').innerHTML=PALS().map(p=>{
+    const g=PAL, s=SUB;
+    PAL=p.k; const v=valSem(D.week), cl=tono(v); PAL=g;
+    return `<button data-pal="${p.k}" class="${p.k===g?'on':''} ${cl}">${esc(p.n)}<i>${
+      p.k===g?fmt(v):(v==null?'—':fmt(v))}</i></button>`;}).join('');
+}
+function pintaFiltro(){
+  const d=DIS();
+  document.getElementById('fdist').innerHTML=
+    `<option value="gen"${SUB==='gen'?' selected':''}>GENERAL PONDERADO · los ${d.length} distribuidores</option>`+
+    d.map(x=>{const v=valDist(x.k,D.week);
+      return `<option value="${x.k}"${SUB===x.k?' selected':''}>${esc(x.n||'Sin nombre')} — ${v==null?'sin dato':fmt(v)}</option>`;}).join('');
 }
 
-/* ---------- compromisos ---------- */
+/* ---------- compromisos ---------- *//* ---------- compromisos ---------- */
 function comp(){
   document.getElementById('comwk').textContent=D.week;
   const bt=document.getElementById('vista');
@@ -1348,86 +1255,247 @@ function pintaAnios(){
   const h=ys.length<2?'':ys.map(y=>`<button data-anio="${y}" class="${y===T.y?'on':''}">${y}</button>`).join('');
   ['ysel-oti','ysel-pal'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=h;});
 }
-function pintaSubtabs(){
-  const d=DIS();
-  let h=`<button data-sub="gen" class="gen ${SUB==='gen'?'on':''}">GENERAL PONDERADO</button>`;
-  d.forEach(x=>{const c=cumplD(x.k,D.week);
-    const cl=c==null?'':c>=META?'v':c>=META-10?'a':'r';
-    h+=`<button data-sub="${x.k}" class="${cl} ${SUB===x.k?'on':''}">${esc(x.n||'Sin nombre')}<i>${c==null?'—':c+'%'}</i></button>`;});
-  document.getElementById('subtabs').innerHTML=h;
-  document.getElementById('ttl-mat').textContent=
-    SUB==='gen'?'CUMPLIMIENTO SEMANAL POR DISTRIBUIDOR':'CHECKLIST · '+(distAct().n||'');
-}
-function pintaReglas(){
-  const el=document.getElementById('reglas'); if(!el)return;
-  const T=PASOS().length, d=DIS();
-  const pos=d.reduce((a,x)=>a+T*(Number(x.peso)||1),0)||1;
-  const porPaso=100/pos, need=Math.ceil(pos*META/100);
-  const conPeso=d.some(x=>(Number(x.peso)||1)!==1);
-  el.innerHTML=`
-    <div class="rjg">
-      <div class="rjc"><div class="n">${T}<small> pasos</small></div>
-        <div class="l">POR DISTRIBUIDOR</div>
-        <p>El mismo proceso para todos. Un paso se marca solo cuando quedó cerrado dentro de la semana.</p></div>
-      <div class="rjc"><div class="n">${pos}<small> acciones</small></div>
-        <div class="l">POSIBLES CADA SEMANA</div>
-        <p>${T} pasos × ${d.length} distribuidores${conPeso?', contando el peso de cada uno':''}. Ese es el tamaño del juego semanal.</p></div>
-      <div class="rjc"><div class="n">${porPaso.toFixed(1)}<small>%</small></div>
-        <div class="l">MUEVE CADA PASO</div>
-        <p>Da igual en qué distribuidor lo hagas. Se necesitan <strong>${need}</strong> para llegar al ${META}%.</p></div>
-    </div>
+function nomDist(k){const d=DIS().find(x=>x.k===k);return d?(d.n||'Sin nombre'):'';}
 
-    <div class="rjf">
-      <div class="t">LA FÓRMULA DEL GENERAL PONDERADO</div>
-      <div class="frac">
-        <div class="q"><b>pasos cumplidos × peso</b><span class="ln"></span><b>pasos posibles × peso</b></div>
-        <span class="op">×</span><span style="font-family:Poppins;font-weight:800;font-size:15px">100</span>
-        <span class="op">=</span>
-        <span style="font-family:Poppins;font-weight:800;font-size:15px">% de la semana</span>
-      </div>
-    </div>
-
-    <table class="rjt">
-      <tr><th>SI ESTA SEMANA…</th><th>EL GENERAL MARCA</th></tr>
-      <tr><td>Marcas 1 paso, en cualquier distribuidor</td><td><b>${porPaso.toFixed(1)}%</b></td></tr>
-      <tr><td>Marcas ${Math.min(8,pos)} pasos repartidos como sea</td><td><b>${(porPaso*Math.min(8,pos)).toFixed(0)}%</b></td></tr>
-      <tr><td>Marcas ${need} pasos</td><td><b>${META}%</b> · se cumple la palanca</td></tr>
-      <tr><td>Marcas los ${pos}</td><td><b>100%</b></td></tr>
-    </table>
-
-    <div class="rjmal"><strong>Por qué no es un promedio de porcentajes.</strong>
-      Si el general fuera el promedio de los porcentajes de cada distribuidor, avanzar un paso con uno y luego otro paso con otro dejaría el número igual — habrías hecho el doble de trabajo sin mover la barra. Contando sobre el total de acciones, cada paso cuenta siempre.</div>
-
-    ${conPeso?`<div class="rjmal" style="border-left-color:var(--negro);background:#F5F8FB;color:#123A66">
-      <strong>Cómo funciona el peso.</strong> Un distribuidor con peso 3 aporta sus pasos tres veces, arriba y abajo de la fracción. Pesa más en el resultado, pero también exige más para llegar al ${META}%.</div>`:''}`;
-}
 function pintaEscala(){
-  const e=document.getElementById('escala'), P=PASOS(), tot=P.length||1;
-  const fila=(i,t,badge,cls)=>`<div class="lvi ${cls}"${cls.includes('ro')?'':` data-lvck="${i}"`}>
-      <span class="b">${badge}</span>
-      <div class="lvx" contenteditable="true" data-pasol="${i}"
-           spellcheck="false">${esc(t)}</div>
-    </div>`;
-  if(SUB==='gen'){
-    e.innerHTML=`<div class="lvt">LOS ${tot} PASOS PARA MOVER A UN DISTRIBUIDOR</div>`+
-      P.map((t,i)=>fila(i,t,i+1,'ro')).join('')+
-      (()=>{const d=DIS(), T=tot;
-        const posib=d.reduce((a,x)=>a+T*(Number(x.peso)||1),0);
-        const g=totalGen(D.week);
-        const falta=Math.ceil(posib*META/100);
-        return `<div class="lvgran">
-            <b>${g?g.hechos:0}</b><span>de ${posib} pasos ponderados esta semana</span>
-          </div>
-          <div class="lvh">Cada paso que marques —en el distribuidor que sea— mueve el general <strong>${(100/posib*100).toFixed(1)}%</strong>.
-          Se necesitan <strong>${falta}</strong> pasos para llegar al ${META}%.<br>
-          Los ${T} pasos son iguales para los ${d.length} distribuidores. Para marcarlos, entra a su pestaña.</div>`;})();
+  const e=document.getElementById('escala'), P=palAct(), L=filas(), T=L.length||1;
+  const campo=(i,t)=>`<div class="lvx" contenteditable="true" data-fil="${i}" spellcheck="false">${esc(t)}</div>`;
+
+  if(P.tipo==='checklist'){
+    if(SUB==='gen'){
+      const pos=DIS().reduce((a,x)=>a+T*(Number(x.peso)||1),0)||1, g=p1Gen(D.week);
+      e.innerHTML=`<div class="lvt">LOS ${T} PASOS PARA MOVER A UN DISTRIBUIDOR</div>`+
+        L.map((t,i)=>`<div class="lvi ro"><span class="b">${i+1}</span>${campo(i,t)}</div>`).join('')+
+        `<div class="lvgran"><b>${g?g.h:0}</b><span>de ${pos} pasos ponderados esta semana</span></div>
+         <div class="lvh">Cada paso mueve el general <strong>${(100/pos*100).toFixed(1)}%</strong>.
+         Se necesitan <strong>${Math.ceil(pos*metaP()/100)}</strong> para llegar al ${metaP()}%.
+         Para marcarlos, elige un distribuidor en el filtro de arriba.</div>`;
+      return;}
+    const m=celdas(SUB,D.week)||[];let n=0;for(let i=0;i<T;i++)if(m[i])n++;
+    e.innerHTML=`<div class="lvt">${esc(nomDist(SUB)).toUpperCase()} · SEMANA ${D.week}</div>`+
+      L.map((t,i)=>`<div class="lvi ${m[i]?'on':''}" data-lvck="${i}">
+        <span class="b">${m[i]?'✓':i+1}</span>${campo(i,t)}</div>`).join('')+
+      `<div class="lvh"><strong>${n} de ${T}</strong> cumplidos · cada paso vale ${(100/T).toFixed(1)}%
+       · se necesitan <strong>${Math.ceil(T*metaP()/100)}</strong> para llegar al ${metaP()}%</div>`;
     return;}
-  const d=distAct(), m=marcas_(d.k,D.week)||[], n=hechos(D.week)||0;
-  e.innerHTML=`<div class="lvt">${esc(d.n||'ESTE DISTRIBUIDOR').toUpperCase()} · SEMANA ${D.week}</div>`+
-    P.map((t,i)=>fila(i,t,m[i]?'✓':i+1,m[i]?'on':'')).join('')+
-    `<div class="lvh"><strong>${n} de ${tot}</strong> cumplidos esta semana · cada paso vale ${(100/tot).toFixed(1)}%
-      · se necesitan <strong>${Math.ceil(tot*META/100)}</strong> para llegar al ${META}%</div>`;
+
+  if(P.tipo==='tiempo'){
+    const v=valSem(D.week);
+    e.innerHTML=`<div class="lvt">QUIÉN RESPONDE</div>`+
+      (P.colaboradores||[]).map((c,i)=>`<div class="lvi ro">
+        <span class="b">${i+1}</span>
+        <div class="lvx" contenteditable="true" data-colab="${i}" spellcheck="false">${esc(c.n||'')}</div></div>`).join('')+
+      `<div class="lvgran"><b>${v==null?'—':v}</b><span>días hábiles de promedio ${SUB==='gen'?'en todo el canal':'con '+esc(nomDist(SUB))}</span></div>
+       <div class="lvh">Meta: <strong>1 día hábil o menos</strong>. Se captura en la tabla: 0.5 es medio día, 1 es un día completo, 1.5 ya está fuera de meta. Toca un nombre para editarlo.</div>`;
+    return;}
+
+  if(SUB==='gen'){
+    const g=p3Gen(D.week), pos=g?g.p:1;
+    e.innerHTML=`<div class="lvt">LOS ${T} DATOS QUE SE NECESITAN POR DISTRIBUIDOR</div>`+
+      L.map((t,i)=>{let n=0;DIS().forEach(x=>{const m=marcasDato(x.k)||[];if(m[i]&&Number(m[i])<=D.week)n++;});
+        const cl=!n?'':n===DIS().length?'on':'mid';
+        return `<div class="lvi ro ${cl}"><span class="b">${n}/${DIS().length}</span>${campo(i,t)}</div>`;}).join('')+
+      `<div class="lvgran"><b>${g?g.h:0}</b><span>de ${pos} datos ponderados recopilados</span></div>
+       <div class="lvh">La línea solo sube: un dato recopilado ya no se pierde. Cada dato mueve el general <strong>${(100/pos*100).toFixed(1)}%</strong>. Para marcarlos, elige un distribuidor en el filtro de arriba.</div>`;
+    return;}
+  const m=marcasDato(SUB)||[];let n=0;for(let i=0;i<T;i++)if(m[i]&&Number(m[i])<=D.week)n++;
+  e.innerHTML=`<div class="lvt">${esc(nomDist(SUB)).toUpperCase()} · DATOS RECOPILADOS</div>`+
+    L.map((t,i)=>{const w=m[i]&&Number(m[i])<=D.week;
+      return `<div class="lvi ${w?'on':''}" data-lvck="${i}">
+        <span class="b">${w?'✓':i+1}</span>${campo(i,t)}${w?`<span class="sw">S${m[i]}</span>`:''}</div>`;}).join('')+
+    `<div class="lvh"><strong>${n} de ${T}</strong> recopilados · cada dato vale ${(100/T).toFixed(1)}%. Se marca una sola vez y queda registrada la semana en que se consiguió.</div>`;
 }
+
+function chartPal(){
+  const t=TIPO();
+  document.getElementById('palchart').innerHTML =
+    t==='tiempo'?gauge() : t==='datos'?lineaAsc() : barras();
+}
+
+function barras(){
+  const T=tramo(), NB=T.b-T.a+1, M=metaP();
+  const cont=document.getElementById('palchart');
+  const disp=Math.max(360,(cont?cont.clientWidth:900)-80);
+  const X0=40, base=205, u=1.7;
+  const AS=Math.max(34,(disp-X0-18)/NB);
+  const wpx=Math.round(X0+8+NB*AS+10);
+  const ancho=Math.min(AS-8,54), bx=n=>X0+8+(n-T.a)*AS+4;
+  let bars='',labs='';
+  for(let i=T.a;i<=T.b;i++){
+    const d=valSem(i);
+    bars+=`<rect x="${bx(i)}" y="${base-M*u}" width="${ancho}" height="${M*u}" fill="#EDF1F5"/>`;
+    if(d!=null){const c=tono(d,i),col=c==='v'?'#16A47A':c==='a'?'#E8A33D':'#D64A3C';
+      const h=Math.max(2,Math.min(d,100)*u);
+      bars+=`<rect x="${bx(i)}" y="${base-h}" width="${ancho}" height="${h}" fill="${col}"/>
+        <text x="${bx(i)+ancho/2}" y="${Math.max(44,base-h-6)}" font-family="Poppins" font-size="9" font-weight="800" fill="${col}" text-anchor="middle">${d}%</text>`;}
+    labs+=`<text x="${bx(i)+ancho/2}" y="222"${i===D.week?' fill="#082040" font-weight="800"':''}>${i}</text>`;}
+  let seps='',bandas='';
+  bandasMeses().forEach(({t:m,a,b},i)=>{
+    if(i>0)seps+=`<line x1="${bx(a)-6}" y1="30" x2="${bx(a)-6}" y2="212" stroke="#C3CEDA" stroke-width="1"/>`;
+    bandas+=`<text x="${(bx(a)+bx(b)+ancho)/2}" y="239">${m}</text>`;});
+  const p=promedio(); let pb='';
+  if(p){const c=tono(p.v),col=c==='v'?'#16A47A':c==='a'?'#E8A33D':'#D64A3C';
+    const h=Math.max(2,Math.min(p.v,100)*u);
+    pb=`<rect x="14" y="${base-h}" width="42" height="${h}" fill="${col}"/>
+        <text x="35" y="${Math.max(44,base-h-7)}" font-family="Poppins" font-size="12" font-weight="800" fill="${col}" text-anchor="middle">${Math.round(p.v)}%</text>`;}
+  return `<div class="palrow">
+    <div class="palscroll"><svg viewBox="0 0 ${wpx} 248" style="width:${wpx}px;height:248px">
+      <line x1="${X0}" y1="${base}" x2="${wpx-4}" y2="${base}" stroke="#082040" stroke-width="2"/>
+      <line x1="${X0}" y1="30" x2="${X0}" y2="${base}" stroke="#082040" stroke-width="2"/>
+      <g font-family="Poppins" font-size="9.5" font-weight="700" fill="#6B7A8C" text-anchor="end">
+        ${[0,25,50,75,100].map(v=>`<text x="${X0-6}" y="${base-v*u+4}">${v}%</text>`).join('')}</g>
+      ${seps}${bars}
+      <line x1="${X0}" y1="${base-M*u}" x2="${wpx-4}" y2="${base-M*u}" stroke="#082040" stroke-width="2.5"/>
+      <text x="${wpx-6}" y="20" font-family="Poppins" font-size="10" font-weight="800" fill="#082040" text-anchor="end">META ${M}%</text>
+      <g font-family="Poppins" font-size="9.5" fill="#6B7A8C" text-anchor="middle">${labs}</g>
+      <g font-family="Poppins" font-size="9" fill="#6B7A8C" text-anchor="middle" letter-spacing="1.2">${bandas}</g>
+    </svg></div>
+    <div class="palprom"><svg viewBox="0 0 76 248" style="width:76px;height:248px">
+      <line x1="4" y1="30" x2="4" y2="${base+8}" stroke="#082040" stroke-width="1.5"/>
+      <line x1="4" y1="${base}" x2="72" y2="${base}" stroke="#082040" stroke-width="2"/>
+      <line x1="4" y1="${base-M*u}" x2="72" y2="${base-M*u}" stroke="#082040" stroke-width="2.5"/>
+      <text x="38" y="20" font-family="Poppins" font-size="10" font-weight="800" fill="#082040" text-anchor="middle">META ${M}%</text>
+      ${pb}
+      <text x="35" y="222" font-family="Poppins" font-size="9" font-weight="800" fill="#082040" text-anchor="middle">PROM</text>
+    </svg></div></div>
+  ${NB>16?'<div class="arrastra">← ARRASTRA PARA VER LAS DEMÁS SEMANAS →</div>':''}`;
+}
+
+function gauge(){
+  const M=metaP(), MAX=M*3, v=valSem(D.week), p=promedio();
+  const cx=200, cy=196, R=142;
+  const ang=x=>Math.PI*(1-Math.min(1,Math.max(0,x/MAX)));
+  const pt=(x,r)=>[cx+r*Math.cos(ang(x)), cy-r*Math.sin(ang(x))];
+  const arco=(a,b,r,rr)=>{const A=pt(a,r),B=pt(b,r),C=pt(b,rr),E=pt(a,rr);
+    return `M${A[0]},${A[1]} A${r},${r} 0 0 1 ${B[0]},${B[1]} L${C[0]},${C[1]} A${rr},${rr} 0 0 0 ${E[0]},${E[1]} Z`;};
+  let aguja='';
+  if(v!=null){const A=pt(v,R-30);
+    aguja=`<line x1="${cx}" y1="${cy}" x2="${A[0]}" y2="${A[1]}" stroke="#082040" stroke-width="4" stroke-linecap="round"/>
+           <circle cx="${cx}" cy="${cy}" r="9" fill="#082040"/>`;}
+  const c=tono(v), col=c==='v'?'#16A47A':c==='a'?'#E8A33D':c==='r'?'#D64A3C':'#6B7A8C';
+  let mk='';
+  for(let i=0;i<=MAX*2;i++){const x=i/2, A=pt(x,R), B=pt(x,R-(i%2?7:12));
+    mk+=`<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="#fff" stroke-width="${i%2?1:2}"/>`;
+    if(i%2===0){const Tp=pt(x,R+15);
+      mk+=`<text x="${Tp[0]}" y="${Tp[1]+4}" font-family="Poppins" font-size="10" font-weight="700" fill="#6B7A8C" text-anchor="middle">${x}</text>`;}}
+  return `<div class="gwrap">
+    <svg viewBox="0 0 400 236" style="max-width:400px;width:100%">
+      <path d="${arco(0,M,R,R-34)}" fill="#16A47A"/>
+      <path d="${arco(M,M*1.25,R,R-34)}" fill="#E8A33D"/>
+      <path d="${arco(M*1.25,MAX,R,R-34)}" fill="#D64A3C"/>
+      ${mk}${aguja}
+      <text x="${cx}" y="${cy-52}" font-family="Poppins" font-size="46" font-weight="800" fill="${col}" text-anchor="middle">${v==null?'—':v}</text>
+      <text x="${cx}" y="${cy-30}" font-family="Poppins" font-size="10" font-weight="700" letter-spacing="2" fill="#6B7A8C" text-anchor="middle">DÍAS HÁBILES</text>
+      <text x="${cx}" y="${cy+30}" font-family="Poppins" font-size="9.5" font-weight="700" letter-spacing="1.6" fill="#6B7A8C" text-anchor="middle">META ${M} DÍA O MENOS</text>
+    </svg>
+    <div class="gside">
+      <div class="gk"><b style="color:${col}">${v==null?'—':v}</b><span>SEMANA ${D.week}</span></div>
+      <div class="gk"><b>${p?(Math.round(p.v*100)/100):'—'}</b><span>PROMEDIO DE TODAS LAS SEMANAS</span></div>
+      <div class="gh">La aguja marca el promedio de días hábiles en responder. Verde hasta ${M} día, ámbar hasta ${M*1.25}, rojo arriba de eso.</div>
+    </div></div>`;
+}
+
+function lineaAsc(){
+  const T=tramo(), NB=T.b-T.a+1;
+  const cont=document.getElementById('palchart');
+  const disp=Math.max(360,(cont?cont.clientWidth:900)-20);
+  const X0=44, base=205, u=1.7;
+  const AS=Math.max(22,(disp-X0-34)/NB), wpx=Math.round(X0+10+NB*AS+16);
+  const bx=n=>X0+10+(n-T.a)*AS;
+  let pts=[],mts=[],labs='',dots='';
+  for(let i=T.a;i<=T.b;i++){
+    const v=valSem(i);
+    mts.push(bx(i)+','+(base-metaRampa(i)*u));
+    if(v!=null){pts.push(bx(i)+','+(base-v*u));
+      if(i===D.week)dots+=`<circle cx="${bx(i)}" cy="${base-v*u}" r="5" fill="#16A47A"/>
+        <text x="${bx(i)}" y="${base-v*u-11}" font-family="Poppins" font-size="10.5" font-weight="800" fill="#16A47A" text-anchor="middle">${v}%</text>`;}
+    labs+=`<text x="${bx(i)}" y="222"${i===D.week?' fill="#082040" font-weight="800"':''}>${i}</text>`;}
+  let bandas='';
+  bandasMeses().forEach(({t:m,a,b})=>{bandas+=`<text x="${(bx(a)+bx(b))/2}" y="239">${m}</text>`;});
+  return `<div class="palrow"><div class="palscroll">
+    <svg viewBox="0 0 ${wpx} 248" style="width:${wpx}px;height:248px">
+      ${[25,50,75,100].map(v=>`<line x1="${X0}" y1="${base-v*u}" x2="${wpx-4}" y2="${base-v*u}" stroke="#E6ECF2"/>`).join('')}
+      <line x1="${X0}" y1="${base}" x2="${wpx-4}" y2="${base}" stroke="#082040" stroke-width="2"/>
+      <line x1="${X0}" y1="30" x2="${X0}" y2="${base}" stroke="#082040" stroke-width="2"/>
+      <g font-family="Poppins" font-size="9.5" font-weight="700" fill="#6B7A8C" text-anchor="end">
+        ${[0,25,50,75,100].map(v=>`<text x="${X0-6}" y="${base-v*u+4}">${v}%</text>`).join('')}</g>
+      <polyline fill="none" stroke="#082040" stroke-width="2" stroke-dasharray="7,5" points="${mts.join(' ')}"/>
+      ${pts.length?`<polyline fill="none" stroke="#16A47A" stroke-width="3.5" points="${pts.join(' ')}"/>`:''}
+      ${dots}
+      <text x="${wpx-6}" y="20" font-family="Poppins" font-size="9.5" font-weight="800" fill="#082040" text-anchor="end">RITMO ESPERADO · 100% AL CIERRE</text>
+      <g font-family="Poppins" font-size="9.5" fill="#6B7A8C" text-anchor="middle">${labs}</g>
+      <g font-family="Poppins" font-size="9" fill="#6B7A8C" text-anchor="middle" letter-spacing="1.2">${bandas}</g>
+    </svg></div></div>
+  ${NB>16?'<div class="arrastra">← ARRASTRA PARA VER LAS DEMÁS SEMANAS →</div>':''}`;
+}
+
+function matriz(){
+  const T=tramo(), P=palAct(), L=filas(), tip=P.tipo;
+  const enc = SUB==='gen' ? 'DISTRIBUIDOR'
+            : tip==='tiempo' ? esc(nomDist(SUB))+' · COLABORADOR'
+            : esc(nomDist(SUB))+' · '+(tip==='datos'?'DATOS':'PASOS');
+  let h=`<thead><tr><th class="nm">${enc}</th>`;
+  for(let i=T.a;i<=T.b;i++)h+=`<th class="${i===D.week?'cur':''}">S${i}</th>`;
+  h+='</tr></thead><tbody>';
+
+  if(SUB==='gen'){
+    DIS().forEach(d=>{
+      const v=valDist(d.k,D.week), c=tono(v);
+      h+=`<tr><td class="nm"><div class="cli"><span class="pz">×${Number(d.peso)||1}</span>
+        <span class="txt dnom" data-goto="${d.k}">${esc(d.n||'Sin nombre')}</span>
+        <span class="hoy ${c}">${fmt(v)}</span></div></td>`;
+      for(let i=T.a;i<=T.b;i++){const x=valDist(d.k,i);
+        h+=`<td class="${tono(x,i)} ${i===D.week?'cur':''}">${fmt(x)}</td>`;}
+      h+='</tr>';});
+  }else if(tip==='tiempo'){
+    (P.colaboradores||[]).forEach((c,ix)=>{
+      h+=`<tr><td class="nm"><div class="cli"><span class="num">${ix+1}</span>
+        <span class="txt">${esc(c.n||'')}</span></div></td>`;
+      for(let i=T.a;i<=T.b;i++){
+        const v=(celdas(SUB,i)||[])[ix];
+        const cl=(v===''||v==null)?'':tono(Number(v),i);
+        h+=`<td class="${cl} ${i===D.week?'cur':''}"><input class="cell" type="number" step="0.5" min="0" max="10"
+              data-tm="${ix}" data-w="${i}" value="${v==null?'':v}"></td>`;}
+      h+='</tr>';});
+  }else if(tip==='datos'){
+    L.forEach((t,ix)=>{
+      const m=marcasDato(SUB)||[];
+      h+=`<tr><td class="nm"><div class="cli"><span class="num">${ix+1}</span>
+        <span class="txt">${esc(t)}</span></div></td>`;
+      for(let i=T.a;i<=T.b;i++){
+        const on=m[ix]&&Number(m[ix])<=i;
+        const propia=Number(m[ix])===i;
+        h+=`<td class="ck ${on?'on':''} ${propia?'hito':''} ${i===D.week?'cur':''}" data-dt="${ix}" data-w="${i}">${propia?'✓':on?'·':''}</td>`;}
+      h+='</tr>';});
+  }else{
+    L.forEach((t,ix)=>{
+      h+=`<tr><td class="nm"><div class="cli"><span class="num">${ix+1}</span>
+        <span class="txt">${esc(t)}</span></div></td>`;
+      for(let i=T.a;i<=T.b;i++){
+        const on=(celdas(SUB,i)||[])[ix]===true;
+        h+=`<td class="ck ${on?'on':''} ${i===D.week?'cur':''}" data-ck="${ix}" data-w="${i}">${on?'✓':''}</td>`;}
+      h+='</tr>';});
+  }
+
+  const pr=promedio(), pc=pr?tono(pr.v):'';
+  const et = tip==='tiempo'?'DÍAS PROMEDIO' : tip==='datos'?'AVANCE ACUMULADO' : 'CUMPLIMIENTO';
+  h+=`<tr class="delta"><td class="nm">
+      <span class="prom ${pc}"><b>${pr?(tip==='tiempo'?Math.round(pr.v*100)/100:Math.round(pr.v)+'%'):'—'}</b><i>${tip==='datos'?'HOY':'PROM'}</i></span>
+      <span class="dl">${SUB==='gen'?'GENERAL PONDERADO · '+et:et}</span></td>`;
+  for(let i=T.a;i<=T.b;i++){const d=valSem(i);
+    h+=`<td class="${tono(d,i)}">${fmt(d)}</td>`;}
+  h+='</tr></tbody>';
+  document.getElementById('matriz').innerHTML=h;
+  document.getElementById('ttl-mat').textContent =
+    SUB==='gen' ? 'RESULTADO SEMANAL POR DISTRIBUIDOR' : enc;
+  const nm=document.getElementById('nota-mat');
+  if(nm)nm.innerHTML = tip==='tiempo'
+    ? '<strong>Cómo se captura.</strong> En cada celda va el promedio de días hábiles que tardó esa persona en responder durante la semana: 0.5 medio día, 1 un día, 1.5 día y medio. El renglón inferior es el promedio de todos.<br><strong>General ponderado</strong> = promedio de los días de cada distribuidor, pesado por su peso.'
+    : tip==='datos'
+    ? '<strong>Cómo se captura.</strong> Toca la celda de la semana en que conseguiste el dato. Queda marcada con ✓ y a partir de ahí se arrastra como punto, porque un dato recopilado ya no se pierde: la línea solo sube.<br><strong>General ponderado</strong> = datos recopilados entre datos posibles de todos los distribuidores, contando el peso de cada uno.'
+    : '<strong>Cumplimiento de un distribuidor</strong> = pasos cumplidos entre el total del proceso.<br><strong>General ponderado</strong> = todos los pasos cumplidos de la semana entre todos los posibles, contando el peso. No es un promedio de porcentajes: cada paso que marques mueve el general.';
+}
+
 function pintaTextos(){
   const c=cfg();
   const lg=document.getElementById('logo'), br=document.getElementById('brand');
@@ -1437,9 +1505,10 @@ function pintaTextos(){
     : esc(c.tablero);
   document.getElementById('oti-txt2').innerHTML=c.otiTexto||'';
   document.getElementById('oti-nota').innerHTML=(c.otiNota||'')+' La línea de meta sube '+money(PASO)+' cada semana.';
-  document.getElementById('pal-txt2').innerHTML=c.palTexto||'';
-  document.getElementById('pal-nota').innerHTML=c.palNota||'';
-  document.getElementById('pal-lbl').textContent='PROMEDIO · META '+META+'%';
+  const P=palAct();
+  document.getElementById('pal-txt2').innerHTML=P.texto||'';
+  document.getElementById('pal-nota').innerHTML=P.nota||'';
+  document.getElementById('pal-lbl').textContent = P.tipo==='tiempo'?'PROMEDIO · META '+metaP()+' DÍA':P.tipo==='datos'?'AVANCE ACUMULADO':'PROMEDIO · META '+metaP()+'%';
   document.getElementById('addlin').textContent='+ '+(c.lineaLbl||'LÍNEA');
 
   const tl=document.querySelector('.tab[data-tab="leads"]');
@@ -1488,14 +1557,18 @@ function otiPane(){
     document.getElementById('oti-vs').textContent='Meta de esta semana: '+money(m);
     pintar('oti',{c:'',t:'SIN DATO'});}
 }
-function refrescaPalanca(){matriz();chartPal();pintaSemaforo();pintaSubtabs();pintaReglas();}
+function refrescaPalanca(){pintaEscala();matriz();chartPal();pintaSemaforo();pintaPaltabs();pintaFiltro();}
 function pintaSemaforo(){
-  const d=cumpl(D.week), p=promedio();
+  const d=valSem(D.week), p=promedio(), t=TIPO();
   const a=document.getElementById('pal-sem'), b=document.getElementById('pal-prom');
-  if(a)a.textContent=d==null?'—':d+'%';
-  if(b)b.textContent=p?Math.round(p.v)+'%':'—';
-  pintar('pal',estado(p?p.v:null,META,'VAMOS GANANDO','VAMOS PERDIENDO'));
-  pintar('sem',estado(d,META,'GANAMOS ESTA SEMANA','PERDIMOS ESTA SEMANA'));
+  if(a)a.textContent=fmt(d);
+  if(b)b.textContent=p?(t==='tiempo'?(Math.round(p.v*100)/100)+' d':Math.round(p.v)+'%'):'—';
+  const est=x=>x==null?{c:'',t:'SIN DATO'}:
+    (tono(x)==='v'?{c:'v',t:'VAMOS GANANDO'}:tono(x)==='a'?{c:'a',t:'EN RIESGO'}:{c:'r',t:'VAMOS PERDIENDO'});
+  const estS=x=>x==null?{c:'',t:'SIN DATO'}:
+    (tono(x)==='v'?{c:'v',t:'GANAMOS ESTA SEMANA'}:tono(x)==='a'?{c:'a',t:'EN RIESGO'}:{c:'r',t:'PERDIMOS ESTA SEMANA'});
+  pintar('pal',est(p?p.v:null));
+  pintar('sem',estS(d));
 }
 function render(){
   document.getElementById('capwk').textContent=D.week;
@@ -1510,7 +1583,7 @@ function render(){
   document.getElementById('pal-prom').textContent=p?Math.round(p.v)+'%':'—';
   pintar('pal',estado(p?p.v:null,META,'VAMOS GANANDO','VAMOS PERDIENDO'));
   pintar('sem',estado(d,META,'GANAMOS ESTA SEMANA','PERDIMOS ESTA SEMANA'));
-  pintaTextos();pintaAnios();pintaSubtabs();pintaEscala();pintaReglas();pintaLineas();pintaAvance();chartOti();chartPal();matriz();comp();convo();leads();
+  pintaTextos();pintaAnios();pintaPaltabs();pintaFiltro();pintaEscala();pintaLineas();pintaAvance();chartOti();chartPal();matriz();comp();convo();leads();
 }
 
 /* ---------- eventos ---------- */
@@ -1530,6 +1603,28 @@ document.addEventListener('input',e=>{
     D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
       DIS().map((x,k)=>k===i?Object.assign({},x,{peso:Number(t.value)||1}):x)});
     save();pintaEscala();matriz();chartPal();pintaSemaforo();return;}
+  if(t.dataset.tm!=null){
+    const w=String(t.dataset.w), ix=Number(t.dataset.tm);
+    setCelda(SUB,w,ix, t.value===''?'':Number(t.value));
+    clearTimeout(window._tz);window._tz=setTimeout(()=>{
+      chartPal();pintaSemaforo();pintaPaltabs();pintaFiltro();pintaEscala();},400);
+    return;}
+  if(t.dataset.fil!=null){
+    const P=palAct(), ix=Number(t.dataset.fil), v=(t.textContent||'').trim();
+    const ps=PALS().map(x=>{if(x.k!==P.k)return x;
+      const y=Object.assign({},x);
+      if(x.tipo==='checklist'){y.pasos=(x.pasos||[]).slice();y.pasos[ix]=v;}
+      else if(x.tipo==='datos'){y.campos=(x.campos||[]).slice();y.campos[ix]=v;}
+      return y;});
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{palancas:ps});save();
+    clearTimeout(window._fz);window._fz=setTimeout(()=>matriz(),700);return;}
+  if(t.dataset.colab!=null){
+    const P=palAct(), ix=Number(t.dataset.colab), v=(t.textContent||'').trim();
+    const ps=PALS().map(x=>{if(x.k!==P.k)return x;
+      const y=Object.assign({},x);y.colaboradores=(x.colaboradores||[]).slice();
+      y.colaboradores[ix]=Object.assign({},y.colaboradores[ix],{n:v});return y;});
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{palancas:ps});save();
+    clearTimeout(window._fz);window._fz=setTimeout(()=>matriz(),700);return;}
   if(t.dataset.lc!=null){const i=t.dataset.lc;D.cob[i]=D.cob[i]||{};
     D.cob[i][D.week]=t.value===''?'':Number(t.value);save();chartOti();otiPane();pintaAvance();return;}
   if(t.dataset.ln!=null){D.lineas[t.dataset.ln].n=t.value;save();pintaAvance();return;}
@@ -1574,6 +1669,7 @@ document.addEventListener('change',e=>{
     rd.readAsText(f);e.target.value='';return;}
   const t=e.target;
   if(t.id==='wk'){D.week=Number(t.value);ANIO=anioDe(D.week);save();render();return;}
+  if(t.id==='fdist'){SUB=t.value;refrescaPalanca();return;}
   if(t.id==='modo'){D.modo=t.value;save();render();return;}
   if(t.dataset.cm&&t.dataset.f==='cuando'){const a=getArr(t.dataset.cm),ix=Number(t.dataset.ix);
     a[ix]=a[ix]||{};a[ix].cuando=t.value;save();return;}
@@ -1654,33 +1750,35 @@ document.addEventListener('click',e=>{
     baja('\ufeff'+f.join('\n'),'text/csv;charset=utf-8','csv');return;}
   if(t.id==='cfgimpb'){const b=document.getElementById('cfgrest');
     b.style.display=b.style.display==='none'?'block':'none';return;}
-  // marcar un paso desde la tabla
+  // marcar en la tabla (checklist)
   if(t.dataset.ck!=null){
-    const k=distAct().k, w=String(t.dataset.w), ix=Number(t.dataset.ck);
-    D.check=D.check||{}; if(!D.check[k])D.check[k]={};
-    if(!Array.isArray(D.check[k][w]))D.check[k][w]=[];
-    D.check[k][w][ix]=!D.check[k][w][ix];
-    save();
-    t.classList.toggle('on',!!D.check[k][w][ix]);
-    t.textContent=D.check[k][w][ix]?'✓':'';
-    refrescaPalanca();
-    return;}
+    const w=String(t.dataset.w), ix=Number(t.dataset.ck);
+    const m=celdas(SUB,w)||[];
+    setCelda(SUB,w,ix,!m[ix]);
+    refrescaPalanca();return;}
 
-  // marcar un paso desde el panel izquierdo
+  // marcar un dato recopilado (hit rate)
+  if(t.dataset.dt!=null){
+    const w=Number(t.dataset.w), ix=Number(t.dataset.dt);
+    const m=marcasDato(SUB)||[];
+    setDato(SUB,ix, Number(m[ix])===w ? null : w);
+    refrescaPalanca();return;}
+
+  // marcar desde el panel izquierdo
   const lv=e.target.closest&&e.target.closest('.lvi');
   if(lv&&lv.dataset.lvck!=null&&!(e.target.closest&&e.target.closest('.lvx'))){
-    const k=distAct().k, w=String(D.week), ix=Number(lv.dataset.lvck);
-    D.check=D.check||{}; if(!D.check[k])D.check[k]={};
-    if(!Array.isArray(D.check[k][w]))D.check[k][w]=[];
-    D.check[k][w][ix]=!D.check[k][w][ix];
-    save(); pintaEscala(); refrescaPalanca();
-    return;}
+    const ix=Number(lv.dataset.lvck);
+    if(TIPO()==='datos'){const m=marcasDato(SUB)||[];
+      setDato(SUB,ix, Number(m[ix])===D.week ? null : D.week);}
+    else{const m=celdas(SUB,String(D.week))||[];
+      setCelda(SUB,String(D.week),ix,!m[ix]);}
+    refrescaPalanca();return;}
 
-  // cambiar de pestaña de distribuidor
-  if(t.dataset.sub){SUB=t.dataset.sub;
-    pintaSubtabs();pintaEscala();refrescaPalanca();return;}
-  if(t.dataset.goto){SUB=t.dataset.goto;
-    pintaSubtabs();pintaEscala();refrescaPalanca();return;}
+  // cambiar de palanca
+  if(t.dataset.pal){PAL=t.dataset.pal;
+    if(SUB!=='gen'&&!DIS().some(x=>x.k===SUB))SUB='gen';
+    pintaTextos();pintaPaltabs();pintaFiltro();refrescaPalanca();return;}
+  if(t.dataset.goto){SUB=t.dataset.goto;pintaFiltro();refrescaPalanca();return;}
 
   if(t.dataset.anio){ANIO=Number(t.dataset.anio);render();return;}
   if(t.dataset.tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b===t));
@@ -1744,6 +1842,15 @@ document.addEventListener('click',e=>{
       D.cob=nc;save();render();}return;}
   if(t.id==='addwk'){W++;D.semanas=W;D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{semanas:W});
     save();llenarSel();render();return;}
+  if(t.id==='addfila'){
+    const P=palAct(), ps=PALS().map(x=>{if(x.k!==P.k)return x;
+      const y=Object.assign({},x);
+      if(x.tipo==='checklist'){y.pasos=(x.pasos||[]).concat(['Nuevo paso']);}
+      else if(x.tipo==='datos'){y.campos=(x.campos||[]).concat(['Nuevo dato']);}
+      else{y.colaboradores=(x.colaboradores||[]).concat([{k:'c'+Date.now().toString(36),n:'Nombre '+((x.colaboradores||[]).length+1)}]);}
+      return y;});
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{palancas:ps});save();
+    pintaEscala();matriz();chartPal();return;}
   if(t.id==='adddist2'){
     const li=DIS().slice();
     li.push({k:'d'+Date.now().toString(36),n:'Distribuidor '+(li.length+1),peso:1});
