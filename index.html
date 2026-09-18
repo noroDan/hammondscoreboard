@@ -887,8 +887,6 @@ function defaults(){
       palTipo:'checklist', palMeta:80, palUnidad:'%',
       palTexto:CFG_BASE.palTexto, palNota:CFG_BASE.palNota,
       filaLbl:CFG_BASE.filaLbl,
-      filaLbl:'PRIORIDAD',
-      pasos:(D.cfg&&D.cfg.pasos&&D.cfg.pasos.length)?D.cfg.pasos:CFG_BASE.pasos.slice(),
       distribuidores:(D.cfg&&D.cfg.distribuidores&&D.cfg.distribuidores.length>1)
         ? D.cfg.distribuidores.map(x=>({k:x.k,n:x.n,peso:x.peso||1}))
         : JSON.parse(JSON.stringify(CFG_BASE.distribuidores))});
@@ -1255,6 +1253,73 @@ function pintaAnios(){
   const h=ys.length<2?'':ys.map(y=>`<button data-anio="${y}" class="${y===T.y?'on':''}">${y}</button>`).join('');
   ['ysel-oti','ysel-pal'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=h;});
 }
+function chartOti(){
+  const marcas=[],rango=OTI_FIN-OTI_INI;
+  for(let i=0;i<=4;i++)marcas.push(OTI_INI+rango*i/4);
+  const etiq=marcas.map(v=>mm(v));
+  const largo=etiq.reduce((a,b)=>Math.max(a,b.length),0);
+  const MX=Math.min(150,Math.max(58,26+largo*6.4));
+  const T=tramo(), NS=Math.max(1,T.b-T.a);
+  const x=n=>MX+(n-T.a)*((618-MX)/NS);
+  const y=v=>Math.max(32,Math.min(250,250-((v-OTI_INI)/(rango||1))*212));
+  let grid='',ylab='';
+  marcas.forEach((v,i)=>{grid+=`<line x1="${MX}" y1="${y(v)}" x2="618" y2="${y(v)}" stroke="#E6ECF2" stroke-width="1"/>`;
+    ylab+=`<text x="${MX-6}" y="${y(v)+4}">${etiq[i]}</text>`;});
+  let seps='',bandas='';
+  bandasMeses().forEach(({t:m,a,b},i)=>{
+    if(i>0){const xs=x(a)-(((618-MX)/NS)/2);
+      seps+=`<line x1="${xs}" y1="32" x2="${xs}" y2="262" stroke="#DCE4EC" stroke-width="1"/>`;}
+    bandas+=`<text x="${(x(a)+x(b))/2}" y="284">${m}</text>`;});
+  let ticks='',labs='';
+  const salto=NS>26?Math.ceil((NS+1)/26):1;
+  for(let i=T.a;i<=T.b;i++){
+    ticks+=`<line x1="${x(i)}" y1="250" x2="${x(i)}" y2="256"/>`;
+    if((i-T.a)%salto===0||i===D.week)
+      labs+=`<text x="${x(i)}" y="268"${i===D.week?' fill="#082040" font-weight="800"':''}>${i}</text>`;}
+  let metaPts=[];
+  for(let i=T.a;i<=T.b;i++)metaPts.push(x(i)+','+y(metaOti(i)));
+  metaPts=metaPts.join(' ');
+  let pts=[],ult=null;
+  for(let i=T.a;i<=T.b;i++){const v=valOti(i);
+    if(v!=null){pts.push([x(i),y(v),i,v]);ult=[x(i),y(v),i,v];}}
+  const real=pts.length>1?`<polyline fill="none" stroke="#49C2F1" stroke-width="3.5" stroke-linejoin="round" points="${pts.map(p=>p[0]+','+p[1]).join(' ')}"/>`:'';
+  const dots=pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#49C2F1"/>`).join('');
+  let guia='';
+  if(ult){
+    guia=`<line x1="${ult[0]}" y1="${ult[1]}" x2="${ult[0]}" y2="250" stroke="#49C2F1" stroke-width="1.2" stroke-dasharray="3,3"/>
+    <line x1="${MX}" y1="${ult[1]}" x2="${ult[0]}" y2="${ult[1]}" stroke="#49C2F1" stroke-width="1.2" stroke-dasharray="3,3"/>
+    <circle cx="${ult[0]}" cy="${ult[1]}" r="6" fill="#fff" stroke="#49C2F1" stroke-width="3"/>
+    <rect x="${Math.max(MX,Math.min(ult[0]-33,552))}" y="${Math.max(ult[1]-30,6)}" width="66" height="19" rx="2" fill="#49C2F1"/>
+    <text x="${Math.max(MX+33,Math.min(ult[0],585))}" y="${Math.max(ult[1]-16,20)}" font-family="Poppins" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">S${ult[2]} · ${wkDate(ult[2])}</text>`;}
+  document.getElementById('otichart').innerHTML=`
+  <svg viewBox="0 0 640 292" role="img" aria-label="Cobrado acumulado contra linea de meta">
+    ${D.week>=T.a&&D.week<=T.b?`<rect x="${x(D.week)-Math.min(13,(618-MX)/NS/2)}" y="32" width="${Math.min(26,(618-MX)/NS)}" height="218" fill="#E9EEF4"/>`:''}
+    ${grid}${seps}
+    <line x1="${MX}" y1="250" x2="618" y2="250" stroke="#082040" stroke-width="2"/>
+    <line x1="${MX}" y1="32" x2="${MX}" y2="250" stroke="#082040" stroke-width="2"/>
+    <polyline fill="none" stroke="#082040" stroke-width="2.5" stroke-dasharray="8,5" points="${metaPts}"/>
+    ${real}${dots}${guia}
+    <g stroke="#C3CEDA" stroke-width="1">${ticks}</g>
+    <g font-family="Poppins" font-size="9.5" font-weight="700" fill="#6B7A8C" text-anchor="end">${ylab}</g>
+    <g font-family="Poppins" font-size="8" fill="#6B7A8C" text-anchor="middle">${labs}</g>
+    <g font-family="Poppins" font-size="9" fill="#6B7A8C" text-anchor="middle" letter-spacing="1.2">${bandas}</g>
+  </svg>`;
+}
+
+function pintar(pre,est){
+  ['v','a','r'].forEach(k=>{const el=document.getElementById('l-'+pre+'-'+k);
+    if(el)el.className='lamp'+(est.c===k?' on-'+k:'');});
+  const t=document.getElementById(pre+'-txt');
+  if(!t)return;
+  t.textContent=est.t;
+  t.style.color=est.c==='v'?'var(--verde)':est.c==='a'?'var(--amar)':est.c==='r'?'var(--rojo)':'var(--gris)';
+}
+function estado(real,meta,gan,perd){
+  if(real==null)return {c:'',t:'SIN DATO'};
+  if(real>=meta)return {c:'v',t:gan};
+  if(real>=meta-10)return {c:'a',t:'EN RIESGO'};
+  return {c:'r',t:perd};
+}
 function nomDist(k){const d=DIS().find(x=>x.k===k);return d?(d.n||'Sin nombre'):'';}
 
 function pintaEscala(){
@@ -1575,34 +1640,19 @@ function render(){
   document.getElementById('wkdate').textContent=wkDate(D.week);
   document.getElementById('wk').value=D.week;
   document.getElementById('resp').value=D.resp||'';
-    document.getElementById('modo').value=D.modo;
+  document.getElementById('modo').value=D.modo;
   document.getElementById('caplbl').textContent=D.modo==='nuevo'?'COBRADO NUEVO':'ACUMULADO TOTAL';
-  otiPane();pintaAvance();
-  const d=delta(D.week), p=promedio();
-  document.getElementById('pal-sem').textContent=d==null?'—':d+'%';
-  document.getElementById('pal-prom').textContent=p?Math.round(p.v)+'%':'—';
-  pintar('pal',estado(p?p.v:null,META,'VAMOS GANANDO','VAMOS PERDIENDO'));
-  pintar('sem',estado(d,META,'GANAMOS ESTA SEMANA','PERDIMOS ESTA SEMANA'));
-  pintaTextos();pintaAnios();pintaPaltabs();pintaFiltro();pintaEscala();pintaLineas();pintaAvance();chartOti();chartPal();matriz();comp();convo();leads();
+  pintaTextos();
+  otiPane();pintaLineas();pintaAvance();chartOti();
+  pintaAnios();pintaPaltabs();pintaFiltro();pintaEscala();
+  chartPal();matriz();pintaSemaforo();
+  comp();convo();leads();
 }
+
 
 /* ---------- eventos ---------- */
 document.addEventListener('input',e=>{
   const t=e.target;
-  if(t.dataset.pasol!=null){
-    const ix=Number(t.dataset.pasol), P=PASOS().slice();
-    P[ix]=(t.textContent||'').trim();
-    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{pasos:P});
-    save();clearTimeout(window._pz);
-    window._pz=setTimeout(()=>{matriz();},600);return;}
-  if(t.dataset.dnl!=null){const i=Number(t.dataset.dnl);
-    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
-      DIS().map((x,k)=>k===i?Object.assign({},x,{n:t.value}):x)});
-    save();pintaSubtabs();return;}
-  if(t.dataset.dpl!=null){const i=Number(t.dataset.dpl);
-    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
-      DIS().map((x,k)=>k===i?Object.assign({},x,{peso:Number(t.value)||1}):x)});
-    save();pintaEscala();matriz();chartPal();pintaSemaforo();return;}
   if(t.dataset.tm!=null){
     const w=String(t.dataset.w), ix=Number(t.dataset.tm);
     setCelda(SUB,w,ix, t.value===''?'':Number(t.value));
