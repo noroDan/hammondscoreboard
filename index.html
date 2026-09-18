@@ -218,6 +218,12 @@
     display:flex;align-items:center;justify-content:center;font-family:Poppins,sans-serif;
     font-weight:800;font-size:10.5px;color:var(--gris);background:#fff}
   .lvi.on .b{background:var(--verde);border-color:var(--verde);color:#fff}
+  .lvi.ro{cursor:default}
+  .lvi.ro:hover{background:none}
+  .lvi.ro .b{font-size:9.5px;flex:0 0 32px}
+  .lvi.ro.on .b{background:var(--verde);border-color:var(--verde);color:#fff}
+  .lvi.ro.mid .b{background:#FDF6E9;border-color:var(--amar);color:#8A6417}
+  .lvi.ro.low .b{background:#FCF0EE;border-color:var(--rojo);color:#A5382C}
   .lvx{flex:1 1 auto;border:none;background:transparent;font-family:Inter,sans-serif;
     font-size:12px;color:var(--negro);padding:4px 5px;border-radius:2px;min-width:0}
   .lvx:focus{background:#F2F7FB;outline:none}
@@ -269,6 +275,12 @@
   td.nm .cli{display:flex;gap:9px;align-items:flex-start;padding:9px 10px}
   td.nm .num{font-weight:800;color:var(--cyan);flex:0 0 auto;font-size:11px;padding-top:9px}
   td.nm .pz{font-weight:800;color:var(--cyan);flex:0 0 auto;font-size:10px;padding-top:1px}
+  td.nm .dnom{font-weight:700;cursor:pointer;text-decoration:underline;
+    text-decoration-color:var(--linea);text-underline-offset:3px}
+  td.nm .dnom:hover{color:var(--cyan)}
+  td.nm .hoy{margin-left:auto;font-family:Poppins,sans-serif;font-weight:800;
+    font-size:11px;color:var(--gris);padding-left:10px}
+  td.nm .hoy.v{color:var(--verde)}td.nm .hoy.a{color:var(--amar)}td.nm .hoy.r{color:var(--rojo)}
   td.nm input.pri{border:none;background:transparent;font-family:Poppins,sans-serif;
     font-size:11.5px;font-weight:500;padding:6px 4px;color:var(--negro);border-radius:2px}
   td.nm input.pri:focus{background:#F2F7FB;outline:none}
@@ -439,7 +451,7 @@
       </div>
 
       <div class="cfgs">DISTRIBUIDORES Y SUS PRIORIDADES</div>
-      <div class="cfghelp">Cada distribuidor tiene su propio checklist. El <strong>peso</strong> define cuánto influye en el general ponderado: si uno vale el doble que otro, ponle 2. El cumplimiento de cada uno se calcula sobre su propio total, así que agregar o quitar prioridades cambia cuánto vale cada una.</div>
+      <div class="cfghelp">Los <strong>8 pasos</strong> son los mismos para todos y se editan desde el panel izquierdo del marcador. Aquí se define quién está en la lista y el <strong>peso</strong> de cada uno: cuánto influye en el general ponderado. Si un distribuidor vale el doble que otro, ponle 2.</div>
       <div id="cfgdist"></div>
       <button class="btn" id="adddist">+ DISTRIBUIDOR</button>
 
@@ -654,22 +666,22 @@ const CFG_BASE={
   palTexto:'Lograr <strong>mayor o igual al 80%</strong> de cumplimiento semanal del checklist de fortalecimiento de marca.',
   palNota:'Cada punto se marca solo cuando quedó hecho dentro de la semana. Lo que se empezó pero no se cerró no cuenta.',
   palMeta:80, palUnidad:'%',
+  pasos:[
+    'Contacto directo sostenido — visita o videollamada, no correo',
+    'Capacitación técnica a su fuerza de ventas',
+    'Material de venta co-marcado entregado y en uso',
+    'Leads de la semana entregados en menos de 48 horas',
+    'Contenido técnico publicado que le manda demanda',
+    'Seguimiento a sus cotizaciones abiertas, con estatus registrado',
+    'Caso de éxito documentado con un cliente final que él atendió',
+    'Revisión de métricas con él: leads, cotizaciones y conversión'
+  ],
   distribuidores:[
-    {k:'d1',n:'Distribuidor 1',peso:1,items:[
-      'Publicar 2 piezas de contenido técnico dirigidas al cliente final',
-      'Entregar los leads captados de la semana en menos de 48 horas',
-      'Impartir una sesión técnica a su fuerza de ventas',
-      'Entregar material de venta co-marcado (fichas, cotizador, exhibidor)',
-      'Enviar el boletín semanal: disponibilidad, tiempos de entrega y campañas',
-      'Sostener contacto directo — visita o videollamada, no correo',
-      'Dar seguimiento a sus cotizaciones abiertas y registrar el estatus',
-      'Documentar un caso de éxito con un cliente final que él atendió',
-      'Revisar con él las métricas de la semana: leads, cotizaciones, conversión',
-      'Confirmar que sus datos y cobertura están correctos en el localizador']},
-    {k:'d2',n:'Distribuidor 2',peso:1,items:['','','','','']},
-    {k:'d3',n:'Distribuidor 3',peso:1,items:['','','','','']},
-    {k:'d4',n:'Distribuidor 4',peso:1,items:['','','','','']},
-    {k:'d5',n:'Distribuidor 5',peso:1,items:['','','','','']}
+    {k:'d1',n:'Distribuidor 1',peso:1},
+    {k:'d2',n:'Distribuidor 2',peso:1},
+    {k:'d3',n:'Distribuidor 3',peso:1},
+    {k:'d4',n:'Distribuidor 4',peso:1},
+    {k:'d5',n:'Distribuidor 5',peso:1}
   ],
   palTipo:'checklist',
   personas:[{k:'p1',n:'PERSONA 1',r:'líder'},{k:'p2',n:'PERSONA 2',r:''},{k:'p3',n:'PERSONA 3',r:''}],
@@ -690,9 +702,9 @@ function aplicaCfg(){
   START=new Date(pz[0],pz[1]-1,pz[2]);
   NET=6;
   PERSONAS=(c.personas||[]).map((p,i)=>({k:p.k||('p'+(i+1)),n:p.n||'',r:p.r||''}));
-  SALTOS=['— ¿a qué prioridad le pega? —'];
-  (c.distribuidores||[]).forEach(d=>(d.items||[]).forEach((t,i)=>
-    SALTOS.push(d.n+' · '+(i+1)+'. '+String(t).slice(0,48))));
+  SALTOS=['— ¿a qué paso le pega? —'];
+  ((c.pasos&&c.pasos.length)?c.pasos:CFG_BASE.pasos).forEach((t,i)=>
+    SALTOS.push((i+1)+' · '+String(t).slice(0,60)));
 }
 function esc(t){return String(t==null?'':t).replace(/[<>]/g,m=>m==='<'?'&lt;':'&gt;');}
 function anioDe(n){const d=new Date(START);d.setDate(d.getDate()+(n-1)*7);return d.getFullYear();}
@@ -785,7 +797,7 @@ function defaults(){
   if(!D.leads)D.leads=[];
   if(!D.cfg)D.cfg=JSON.parse(JSON.stringify(CFG_BASE));
   if(!D.check)D.check={};
-  if(D.cfgv!==5){
+  if(D.cfgv!==6){
     D.cfg=Object.assign({},D.cfg,{
       semanas:67, inicio:'2026-09-17',
       otiIni:0, otiFin:5000000, uSim:'$', uSuf:'', uMM:true,
@@ -794,13 +806,14 @@ function defaults(){
       palTexto:CFG_BASE.palTexto, palNota:CFG_BASE.palNota,
       filaLbl:CFG_BASE.filaLbl,
       filaLbl:'PRIORIDAD',
+      pasos:(D.cfg&&D.cfg.pasos&&D.cfg.pasos.length)?D.cfg.pasos:CFG_BASE.pasos.slice(),
       distribuidores:(D.cfg&&D.cfg.distribuidores&&D.cfg.distribuidores.length>1)
-        ? D.cfg.distribuidores
+        ? D.cfg.distribuidores.map(x=>({k:x.k,n:x.n,peso:x.peso||1}))
         : JSON.parse(JSON.stringify(CFG_BASE.distribuidores))});
     // lo marcado antes pasa al primer distribuidor
     if(D.check&&!D.check.d1&&Object.keys(D.check).some(k=>Array.isArray(D.check[k])))
       D.check={d1:D.check};
-    D.semanas=67; D.cfgv=5;
+    D.semanas=67; D.cfgv=6;
   }
   aplicaCfg();
   D.clients.forEach(c=>{if(c.st[0]==null||c.st[0]==='')c.st[0]=0;});
@@ -846,18 +859,18 @@ function sincronizar(){
 /* ---------- cálculo ---------- */
 function DIS(){return (cfg().distribuidores||[]);}
 function distAct(){const d=DIS();return d.find(x=>x.k===SUB)||d[0]||{k:'d1',n:'',peso:1,items:[]};}
-function LIS(){return SUB==='gen'?[]:(distAct().items||[]);}
+function PASOS(){const p=cfg().pasos;return (p&&p.length)?p:CFG_BASE.pasos;}
+function LIS(){return PASOS();}
 function marcas_(k,w){const o=D.check&&D.check[k];const a=o&&o[w];return Array.isArray(a)?a:null;}
 function hechosD(k,w,tot){const a=marcas_(k,w);if(!a)return null;
   let n=0;for(let i=0;i<tot;i++)if(a[i])n++;return n;}
-function cumplD(k,w){const d=DIS().find(x=>x.k===k);if(!d)return null;
-  const t=(d.items||[]).length;if(!t)return null;
+function cumplD(k,w){const t=PASOS().length;if(!t)return null;
   const n=hechosD(k,w,t);return n==null?null:Math.round(n/t*100);}
 function cumplGen(w){let sp=0,sw=0;
   DIS().forEach(d=>{const c=cumplD(d.k,w);
     if(c!=null){const p=Number(d.peso)||1;sp+=c*p;sw+=p;}});
   return sw?Math.round(sp/sw):null;}
-function hechos(w){const d=distAct();return hechosD(d.k,w,(d.items||[]).length);}
+function hechos(w){return hechosD(distAct().k,w,PASOS().length);}
 function cumpl(w){return SUB==='gen'?cumplGen(w):cumplD(distAct().k,w);}
 function etapaActual(c){
   for(let i=W;i>=0;i--){const v=c.st[i];if(v!=null&&v!=='')return Number(v);}
@@ -1021,22 +1034,28 @@ function promSvg(base,u,tope){
 /* ---------- matriz ---------- */
 function matriz(){
   const T=tramo();
-  let h=`<thead><tr><th class="nm">${SUB==='gen'?'DISTRIBUIDOR':esc(cfg().filaLbl||'PRIORIDAD')}</th>`;
+  let h=`<thead><tr><th class="nm">${SUB==='gen'
+      ? 'DISTRIBUIDOR'
+      : esc(distAct().n||'DISTRIBUIDOR')+' · LOS '+PASOS().length+' PASOS'}</th>`;
   for(let i=T.a;i<=T.b;i++)h+=`<th class="${i===D.week?'cur':''}">S${i}</th>`;
   h+='</tr></thead><tbody>';
 
   if(SUB==='gen'){
     DIS().forEach(d=>{
-      h+=`<tr><td class="nm"><div class="cli"><span class="pz">×${Number(d.peso)||1}</span>
-          <span class="txt" style="font-weight:700">${esc(d.n||'Sin nombre')}</span></div></td>`;
-      for(let i=T.a;i<=T.b;i++){const c=cumplD(d.k,i);
-        const cl=c==null?'':c>=META?'v':c>=META-10?'a':'r';
-        h+=`<td class="${cl} ${i===D.week?'cur':''}">${c==null?'—':c+'%'}</td>`;}
+      const c=cumplD(d.k,D.week);
+      const cls=c==null?'':c>=META?'v':c>=META-10?'a':'r';
+      h+=`<tr><td class="nm"><div class="cli">
+          <span class="pz">×${Number(d.peso)||1}</span>
+          <span class="txt dnom" data-goto="${d.k}">${esc(d.n||'Sin nombre')}</span>
+          <span class="hoy ${cls}">${c==null?'—':c+'%'}</span></div></td>`;
+      for(let i=T.a;i<=T.b;i++){const v=cumplD(d.k,i);
+        const cl=v==null?'':v>=META?'v':v>=META-10?'a':'r';
+        h+=`<td class="${cl} ${i===D.week?'cur':''}">${v==null?'—':v+'%'}</td>`;}
       h+='</tr>';});
   }else{
-    LIS().forEach((t,ix)=>{
+    PASOS().forEach((t,ix)=>{
       h+=`<tr><td class="nm"><div class="cli"><span class="num">${ix+1}</span>
-          <input class="pri" data-pri="${ix}" value="${esc(t).replace(/"/g,'&quot;')}" placeholder="Escribe la acción de esta prioridad"></div></td>`;
+          <span class="txt">${esc(t)}</span></div></td>`;
       for(let i=T.a;i<=T.b;i++){
         const on=(marcas_(distAct().k,i)||[])[ix]===true;
         h+=`<td class="ck ${on?'on':''} ${i===D.week?'cur':''}" data-ck="${ix}" data-w="${i}">${on?'✓':''}</td>`;}
@@ -1047,7 +1066,7 @@ function matriz(){
   const pc=!pr?'':pr.v>=META?'v':pr.v>=META-10?'a':'r';
   h+=`<tr class="delta"><td class="nm">
       <span class="prom ${pc}"><b>${pr?Math.round(pr.v)+'%':'—'}</b><i>PROM</i></span>
-      <span class="dl">${SUB==='gen'?'GENERAL PONDERADO':'CUMPLIMIENTO'}</span></td>`;
+      <span class="dl">${SUB==='gen'?'GENERAL PONDERADO':'CUMPLIMIENTO DE '+esc(distAct().n||'').toUpperCase()}</span></td>`;
   for(let i=T.a;i<=T.b;i++){const d=cumpl(i);
     const cl=d==null?'':d>=META?'v':d>=META-10?'a':'r';
     h+=`<td class="${cl}">${d==null?'—':d+'%'}</td>`;}
@@ -1246,11 +1265,9 @@ function leeDist(){
   const prev=(D.cfg&&D.cfg.distribuidores)||[];
   return [...document.querySelectorAll('[data-dn]')].map((e,di)=>{
     const pe=document.querySelector(`[data-dp="${di}"]`);
-    const items=[...document.querySelectorAll(`[data-di="${di}"]`)].map(x=>x.value);
     return {k:(prev[di]&&prev[di].k)||('d'+Date.now().toString(36)+di),
-            n:e.value.trim(), peso:Number(pe&&pe.value)||1,
-            items:items.length?items:['']};
-  }).filter(d=>d.n||d.items.some(x=>x));}
+            n:e.value.trim(), peso:Number(pe&&pe.value)||1};
+  }).filter(d=>d.n);}
 function pintaCfg(){
   const c=cfg();
   document.querySelectorAll('[data-cf]').forEach(el=>{
@@ -1263,11 +1280,7 @@ function pintaCfg(){
         <input type="number" data-dp="${di}" value="${Number(d.peso)||1}" min="1" max="20" title="Peso">
         ${(c.distribuidores.length>1)?`<button class="btn x" data-dx="${di}" style="margin:0;border:none;color:#D64A3C">×</button>`:'<span></span>'}
       </div>
-      ${(d.items||[]).map((t,i)=>
-        `<div class="er2b"><b>${i+1}</b>
-         <input type="text" data-di="${di}" data-ii="${i}" value="${esc(t).replace(/"/g,'&quot;')}" placeholder="Nombre de la prioridad ${i+1}">
-         ${d.items.length>1?`<button class="btn x" data-dix="${di}-${i}" style="margin:0;border:none;color:#C3CEDA">×</button>`:'<span></span>'}</div>`).join('')}
-      <button class="btn add" data-dadd="${di}">+ PRIORIDAD</button>
+
     </div>`).join('');
   document.getElementById('cfgpersonas').innerHTML=(c.personas||[]).map((p,i)=>
     `<div class="pr2"><input type="text" data-cfp="${i}" data-f="n" value="${esc(p.n).replace(/"/g,'&quot;')}" placeholder="Nombre">
@@ -1290,28 +1303,27 @@ function pintaSubtabs(){
     SUB==='gen'?'CUMPLIMIENTO SEMANAL POR DISTRIBUIDOR':'CHECKLIST · '+(distAct().n||'');
 }
 function pintaEscala(){
-  const e=document.getElementById('escala');
+  const e=document.getElementById('escala'), P=PASOS(), tot=P.length||1;
   if(SUB==='gen'){
-    const d=DIS(), sw=d.reduce((x,y)=>x+(Number(y.peso)||1),0)||1;
-    e.innerHTML='<div class="lvt">DISTRIBUIDORES · PESO EN EL GENERAL</div>'+
-      d.map((x,i)=>{const c=cumplD(x.k,D.week);
-        const cl=c==null?'':c>=META?'v':c>=META-10?'a':'r';
-        return `<div class="lvr" data-ir="${x.k}">
-          <input class="lvn" data-dnl="${i}" value="${esc(x.n||'').replace(/"/g,'&quot;')}" placeholder="Nombre del distribuidor">
-          <input class="lvp" type="number" min="1" max="20" data-dpl="${i}" value="${Number(x.peso)||1}" title="Peso">
-          <span class="lvw">${Math.round((Number(x.peso)||1)/sw*100)}%</span>
-          <span class="lvc ${cl}">${c==null?'—':c+'%'}</span>
+    const d=DIS();
+    e.innerHTML='<div class="lvt">LOS '+tot+' PASOS · CUÁNTOS DISTRIBUIDORES LO CUMPLIERON ESTA SEMANA</div>'+
+      P.map((t,i)=>{
+        let n=0,c=0;
+        d.forEach(x=>{const m=marcas_(x.k,D.week);if(m){c++;if(m[i])n++;}});
+        const cl=!c?'':n===d.length?'on':n>=Math.ceil(d.length/2)?'mid':'low';
+        return `<div class="lvi ro ${cl}">
+          <span class="b">${n}/${d.length}</span>
+          <input class="lvx" data-pasol="${i}" value="${esc(t).replace(/"/g,'&quot;')}" placeholder="Paso ${i+1}">
         </div>`;}).join('')+
-      `<div class="lvh">El peso define cuánto influye cada uno en el ponderado. Toca un nombre para editarlo.</div>`;
+      `<div class="lvh">El paso que aparece bajo en todos los distribuidores es donde el proceso se está rompiendo. Toca el texto para editarlo — el cambio aplica a los ${d.length} distribuidores.</div>`;
     return;}
-  const d=distAct(), L=d.items||[], m=marcas_(d.k,D.week)||[];
-  const n=hechos(D.week)||0, tot=L.length||1;
-  e.innerHTML=`<div class="lvt">PRIORIDADES DE ${esc(d.n||'ESTE DISTRIBUIDOR').toUpperCase()} · SEMANA ${D.week}</div>`+
-    L.map((t,i)=>`<div class="lvi ${m[i]?'on':''}" data-lvck="${i}">
+  const d=distAct(), m=marcas_(d.k,D.week)||[], n=hechos(D.week)||0;
+  e.innerHTML=`<div class="lvt">LOS ${tot} PASOS PARA MOVER A ${esc(d.n||'ESTE DISTRIBUIDOR').toUpperCase()} · SEMANA ${D.week}</div>`+
+    P.map((t,i)=>`<div class="lvi ${m[i]?'on':''}" data-lvck="${i}">
         <span class="b">${m[i]?'✓':i+1}</span>
-        <input class="lvx" data-prl="${i}" value="${esc(t).replace(/"/g,'&quot;')}" placeholder="Escribe la prioridad ${i+1}">
+        <input class="lvx" data-pasol="${i}" value="${esc(t).replace(/"/g,'&quot;')}" placeholder="Paso ${i+1}">
       </div>`).join('')+
-    `<div class="lvh"><strong>${n} de ${tot}</strong> cumplidas · cada una vale ${(100/tot).toFixed(0)}%
+    `<div class="lvh"><strong>${n} de ${tot}</strong> cumplidos · cada paso vale ${(100/tot).toFixed(1)}%
       · se necesitan <strong>${Math.ceil(tot*META/100)}</strong> para llegar al ${META}%</div>`;
 }
 function pintaTextos(){
@@ -1401,10 +1413,10 @@ function render(){
 /* ---------- eventos ---------- */
 document.addEventListener('input',e=>{
   const t=e.target;
-  if(t.dataset.prl!=null){
-    const d=distAct(), ix=Number(t.dataset.prl);
-    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
-      DIS().map(x=>x.k===d.k?Object.assign({},x,{items:x.items.map((v,i)=>i===ix?t.value:v)}):x)});
+  if(t.dataset.pasol!=null){
+    const ix=Number(t.dataset.pasol), P=PASOS().slice();
+    P[ix]=t.value;
+    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{pasos:P});
     save();return;}
   if(t.dataset.dnl!=null){const i=Number(t.dataset.dnl);
     D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
@@ -1414,12 +1426,6 @@ document.addEventListener('input',e=>{
     D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:
       DIS().map((x,k)=>k===i?Object.assign({},x,{peso:Number(t.value)||1}):x)});
     save();pintaEscala();matriz();chartPal();pintaSemaforo();return;}
-  if(t.dataset.pri!=null){
-    const d=distAct(), ix=Number(t.dataset.pri);
-    const c=Object.assign({},CFG_BASE,D.cfg||{});
-    c.distribuidores=(c.distribuidores||[]).map(x=>x.k===d.k
-      ? Object.assign({},x,{items:x.items.map((v,i)=>i===ix?t.value:v)}) : x);
-    D.cfg=c;save();return;}
   if(t.dataset.lc!=null){const i=t.dataset.lc;D.cob[i]=D.cob[i]||{};
     D.cob[i][D.week]=t.value===''?'':Number(t.value);save();chartOti();otiPane();pintaAvance();return;}
   if(t.dataset.ln!=null){D.lineas[t.dataset.ln].n=t.value;save();pintaAvance();return;}
@@ -1503,20 +1509,13 @@ document.addEventListener('click',e=>{
     b.textContent='APLICADO';setTimeout(()=>{b.textContent=o;},1400);
     return;}
   if(t.id==='adddist'){const li=leeDist();
-    li.push({k:'d'+Date.now().toString(36),n:'',peso:1,items:['','','','','']});
+    li.push({k:'d'+Date.now().toString(36),n:'Nuevo distribuidor',peso:1});
     D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:li});pintaCfg();return;}
   if(t.dataset.dx!=null){const li=leeDist();
     if(confirm('¿Borrar a "'+(li[t.dataset.dx].n||'sin nombre')+'" y todo lo marcado en su checklist?')){
       li.splice(Number(t.dataset.dx),1);
       D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:li});pintaCfg();}
     return;}
-  if(t.dataset.dadd!=null){const li=leeDist();
-    li[t.dataset.dadd].items.push('');
-    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:li});pintaCfg();return;}
-  if(t.dataset.dix){const [di,ii]=t.dataset.dix.split('-').map(Number);
-    const li=leeDist();li[di].items.splice(ii,1);
-    if(!li[di].items.length)li[di].items=[''];
-    D.cfg=Object.assign({},CFG_BASE,D.cfg||{},{distribuidores:li});pintaCfg();return;}
   if(t.id==='addpersona'){const ps=[...document.querySelectorAll('[data-cfp][data-f="n"]')].map((e,i)=>({
       k:'p'+(i+1),n:e.value,r:(document.querySelectorAll('[data-cfp][data-f="r"]')[i]||{}).value||''}));
     ps.push({k:'p'+(ps.length+1)+'-'+Math.random().toString(36).slice(2,6),n:'',r:''});
